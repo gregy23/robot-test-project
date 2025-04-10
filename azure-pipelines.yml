@@ -10,8 +10,10 @@ steps:
 - task: UsePythonVersion@0
   inputs:
     versionSpec: '3.13.2'
+    
 - script: |
-    pip install robotframework  # Install Robot Framework
+    # Installing Robot Framework
+    pip install robotframework
   displayName: 'Install Robot Framework'
 
 
