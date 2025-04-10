@@ -1,34 +1,46 @@
 trigger:
-- main 
-pool:
-  name: Azure Pipelines
-  vmImage: 'windows-latest'  # or another image
+  branches:
+    include:
+      - main
 
-steps:
-- task: UsePythonVersion@0
-  inputs:
-    versionSpec: '.13.2'  # Specify the Python version you want
-  displayName: 'Set up Python'
+jobs:
+  - job: Build
+    pool:
+      vmImage: 'windows-latest'
+    
+    steps:
+      - task: Checkout@1  # Corrected checkout task version
+        displayName: 'Checkout code'
+      
+      - task: UsePythonVersion@0
+        inputs:
+          versionSpec: '3.x'
+          addToPath: true
+        displayName: 'Set up Python'
+      
+      - script: |
+          python -m venv venv  # Create a virtual environment
+          .\venv\Scripts\activate  # Activate the virtual environment on Windows
+        displayName: 'Create and Activate Virtual Environment'
 
-- script: |
-    python -m venv venv  # Create a virtual environment
-    source venv/bin/activate  # Activate the environment
-    pip install -r requirements.txt  # Install dependencies (if using a requirements.txt)
-  displayName: 'Install dependencies'
+      - script: |
+          .\venv\Scripts\activate  # Activate the virtual environment
+          pip install -r requirements.txt  # Install dependencies
+        displayName: 'Install dependencies'
 
-- script: |
-    source venv/bin/activate  # Activate the virtual environment
-    pip install robotframework  # Install Robot Framework
-  displayName: 'Install Robot Framework'
+      - script: |
+          .\venv\Scripts\activate  # Activate the virtual environment
+          pip install robotframework  # Install Robot Framework
+        displayName: 'Install Robot Framework'
 
-- script: |
-    source venv/bin/activate  # Activate the virtual environment
-    robot --output output.xml path/to/your/tests  # Run the tests
-  displayName: 'Run Robot Framework Tests'
+      - script: |
+          .\venv\Scripts\activate  # Activate the virtual environment
+          robot --output output.xml path/to/your/tests  # Run the tests
+        displayName: 'Run Robot Framework Tests'
 
-- task: PublishTestResults@2
-  inputs:
-    testResultsFormat: 'JUnit'
-    testResultsFiles: '**/output.xml'  # Adjust this based on where your output.xml is saved
-    mergeTestResults: true
-  displayName: 'Publish Test Results'
+      - task: PublishTestResults@2
+        inputs:
+          testResultsFormat: 'JUnit'
+          testResultsFiles: '**/output.xml'  # Adjust this based on where your output.xml is saved
+          mergeTestResults: true
+        displayName: 'Publish Test Results'
