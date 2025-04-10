@@ -1,8 +1,8 @@
 trigger:
 - main 
-
 pool:
- mImage: 'windows-latest'
+  name: Azure Pipelines
+  vmImage: 'windows-latest'  # or another image
 
 steps:
 - task: UsePythonVersion@0
