@@ -1,46 +1,27 @@
 trigger:
   branches:
     include:
-      - main
+      - main  
 
-jobs:
-  - job: Build
-    pool:
-      vmImage: 'windows-latest'
-    
-    steps:
-      - task: Checkout@1  # Corrected checkout task version
-        displayName: 'Checkout code'
-      
-      - task: UsePythonVersion@0
-        inputs:
-          versionSpec: '3.10'
-          addToPath: true
-        displayName: 'Set up Python'
-      
-      - script: |
-          python -m venv venv  # Create a virtual environment
-          .\venv\Scripts\activate  # Activate the virtual environment on Windows
-        displayName: 'Create and Activate Virtual Environment'
+pool:
+  vmImage: 'windows-latest' 
 
-      - script: |
-          .\venv\Scripts\activate  # Activate the virtual environment
-          pip install -r requirements.txt  # Install dependencies
-        displayName: 'Install dependencies'
+steps:
+- task: UsePythonVersion@0
+  inputs:
+    versionSpec: '3.13.2'
+- script: |
+    python -m pip install --upgrade pip
+    pip install robotframework  # Install Robot Framework
+  displayName: 'Install Robot Framework'
 
-      - script: |
-          .\venv\Scripts\activate  # Activate the virtual environment
-          pip install robotframework  # Install Robot Framework
-        displayName: 'Install Robot Framework'
+- script: |
+    robot --output output.xml tests/  # Run Robot Framework tests
+  displayName: 'Run Robot Framework Tests'
 
-      - script: |
-          .\venv\Scripts\activate  # Activate the virtual environment
-          robot --output output.xml path/to/your/tests  # Run the tests
-        displayName: 'Run Robot Framework Tests'
-
-      - task: PublishTestResults@2
-        inputs:
-          testResultsFormat: 'JUnit'
-          testResultsFiles: '**/output.xml'  # Adjust this based on where your output.xml is saved
-          mergeTestResults: true
-        displayName: 'Publish Test Results'
+- task: PublishTestResults@2
+  inputs:
+    testResultsFormat: 'Robot'
+    testResultsFiles: '**/output.xml'
+    mergeTestResults: true
+  displayName: 'Publish Test Results'
