@@ -4,23 +4,31 @@ trigger:
       - main  
 
 pool:
-  vmImage: 'windows-latest' 
+  vmImage: 'windows-latest'  # Or your preferred VM image
 
 steps:
 - task: UsePythonVersion@0
   inputs:
     versionSpec: '3.13.2'
-    
+
 - script: |
-    echo "Starting robot framework tests..."
+    echo "Listing files in the working directory"
+    dir D:\a\1\s  # List the files in the working directory to verify the path
+  displayName: 'List Files in Working Directory'
+
+- script: |
+    echo "Listing contents of the tests directory"
+    dir D:\a\1\s\tests  # List the contents of the tests directory to verify it's correct
+  displayName: 'List Contents of Tests Directory'
+
+- script: |
+    echo "Installing Robot Framework..."
     pip install robotframework
-    robot --output output.xml tests/
-  displayName: 'Run Robot Framework Tests'
-  continueOnError: true
-
+  displayName: 'Install Robot Framework'
 
 - script: |
-    robot --output output.xml tests/  # Run Robot Framework tests
+    echo "Running Robot Framework Tests..."
+    robot --output output.xml D:\a\1\s\tests/  # Ensure the path is correct
   displayName: 'Run Robot Framework Tests'
 
 - task: PublishTestResults@2
