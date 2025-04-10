@@ -16,10 +16,6 @@ steps:
   displayName: 'Install Robot Framework'
 
 - script: |
-    robot --output output.xml tests/  # Run Robot Framework tests
-  displayName: 'Run Robot Framework Tests'
-
-- script: |
     echo "Running tests..."
     robot --output output.xml tests/
   displayName: 'Run Robot Framework Tests'
