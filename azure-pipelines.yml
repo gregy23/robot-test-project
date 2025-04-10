@@ -19,6 +19,12 @@ steps:
     robot --output output.xml tests/  # Run Robot Framework tests
   displayName: 'Run Robot Framework Tests'
 
+- script: |
+    echo "Running tests..."
+    robot --output output.xml tests/
+  displayName: 'Run Robot Framework Tests'
+  continueOnError: true  # This will allow the pipeline to continue and provide more logs
+
 - task: PublishTestResults@2
   inputs:
     testResultsFormat: 'Robot'
