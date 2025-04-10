@@ -12,9 +12,11 @@ steps:
     versionSpec: '3.13.2'
     
 - script: |
-    # Installing Robot Framework
+    echo "Starting robot framework tests..."
     pip install robotframework
-  displayName: 'Install Robot Framework'
+    robot --output output.xml tests/
+  displayName: 'Run Robot Framework Tests'
+  continueOnError: true
 
 
 - script: |
