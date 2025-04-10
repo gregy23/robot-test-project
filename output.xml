@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<robot generator="Robot 7.2.2 (Python 3.13.2 on win32)" generated="2025-04-10T14:19:38.587349" rpa="false" schemaversion="5">
+<suite id="s1" name="Login test" source="c:\Users\macunanan\Documents\Automation\Login_test.robot">
+<test id="s1-t1" name="login_test End-to-End Test" line="18">
+<kw name="Open Browser" owner="SeleniumLibrary">
+<msg time="2025-04-10T14:19:39.336806" level="INFO">Opening browser 'edge' to base url 'https://sysdevintegral360staging.sscgi.com/'.</msg>
+<arg>${URL}</arg>
+<arg>edge</arg>
+<doc>Opens a new browser instance to the optional ``url``.</doc>
+<status status="PASS" start="2025-04-10T14:19:39.332627" elapsed="6.567703"/>
+</kw>
+<kw name="Maximize Browser Window" owner="SeleniumLibrary">
+<doc>Maximizes current browser window.</doc>
+<status status="PASS" start="2025-04-10T14:19:45.904734" elapsed="0.067242"/>
+</kw>
+<kw name="Input Text" owner="SeleniumLibrary">
+<msg time="2025-04-10T14:19:45.984490" level="INFO">Typing text 'stgadmin' into text field 'id=UserName'.</msg>
+<arg>id=UserName</arg>
+<arg>${USERNAME}</arg>
+<doc>Types the given ``text`` into the text field identified by ``locator``.</doc>
+<status status="PASS" start="2025-04-10T14:19:45.978089" elapsed="0.205394"/>
+</kw>
+<kw name="Input Password" owner="SeleniumLibrary">
+<msg time="2025-04-10T14:19:46.187519" level="INFO">Typing password into text field 'id=Password'.</msg>
+<msg time="2025-04-10T14:19:46.235904" level="INFO">Temporally setting log level to: NONE</msg>
+<arg>id=Password</arg>
+<arg>${PASSWORD}</arg>
+<doc>Types the given password into the text field identified by ``locator``.</doc>
+<status status="PASS" start="2025-04-10T14:19:46.185359" elapsed="0.106073"/>
+</kw>
+<kw name="Input Text" owner="SeleniumLibrary">
+<msg time="2025-04-10T14:19:46.294053" level="INFO">Typing text 'CaptchaBypass' into text field 'id=UserCaptchaCode'.</msg>
+<arg>id=UserCaptchaCode</arg>
+<arg>${CAPTCHA_BYPASS}</arg>
+<doc>Types the given ``text`` into the text field identified by ``locator``.</doc>
+<status status="PASS" start="2025-04-10T14:19:46.292800" elapsed="0.104377"/>
+</kw>
+<kw name="Click Button" owner="SeleniumLibrary">
+<msg time="2025-04-10T14:19:46.399825" level="INFO">Clicking button 'id=btnLogins'.</msg>
+<arg>id=btnLogins</arg>
+<doc>Clicks the button identified by ``locator``.</doc>
+<status status="PASS" start="2025-04-10T14:19:46.398730" elapsed="0.096809"/>
+</kw>
+<kw name="Wait Until Page Contains Element" owner="SeleniumLibrary">
+<arg>id=UserManagement</arg>
+<arg>timeout=20s</arg>
+<doc>Waits until the element ``locator`` appears on the current page.</doc>
+<status status="PASS" start="2025-04-10T14:19:46.498433" elapsed="1.413268"/>
+</kw>
+<kw name="Sleep" owner="BuiltIn">
+<msg time="2025-04-10T14:19:57.915412" level="INFO">Slept 10 seconds.</msg>
+<arg>10s</arg>
+<doc>Pauses the test executed for the given time.</doc>
+<status status="PASS" start="2025-04-10T14:19:47.913701" elapsed="10.003029"/>
+</kw>
+<kw name="Close Browser" owner="SeleniumLibrary">
+<doc>Closes the current browser.</doc>
+<status status="PASS" start="2025-04-10T14:19:57.921390" elapsed="2.101213"/>
+</kw>
+<status status="PASS" start="2025-04-10T14:19:39.326185" elapsed="20.698938"/>
+</test>
+<status status="PASS" start="2025-04-10T14:19:38.600133" elapsed="21.431753"/>
+</suite>
+<statistics>
+<total>
+<stat pass="1" fail="0" skip="0">All Tests</stat>
+</total>
+<tag>
+</tag>
+<suite>
+<stat name="Login test" id="s1" pass="1" fail="0" skip="0">Login test</stat>
+</suite>
+</statistics>
+<errors>
+</errors>
+</robot>
