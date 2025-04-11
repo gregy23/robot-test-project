@@ -6,34 +6,30 @@ trigger:
 pool:
   vmImage: 'windows-latest'  # Or your preferred VM image
 
+
+variables:
+  ROBOT_REPORTS_DIR: 'robot_results'
+
 steps:
 - task: UsePythonVersion@0
   inputs:
     versionSpec: '3.13.2'
 
 - script: |
-    echo "Listing files in the working directory"
-    dir D:\a\1\s  # List the files in the working directory to verify the path
-  displayName: 'List Files in Working Directory'
-
-- script: |
-    echo "Listing contents of the tests directory"
-    dir D:\a\1\s\tests  # List the contents of the tests directory to verify it's correct
-  displayName: 'List Contents of Tests Directory'
-
-- script: |
-    echo "Installing Robot Framework..."
+    python -m pip install --upgrade pip
     pip install robotframework
-  displayName: 'Install Robot Framework'
+    pip install robotframework-seleniumlibrary
+    # Add more libraries if needed
+  displayName: 'Install Robot Framework and dependencies'
 
 - script: |
-    echo "Running Robot Framework Tests..."
-    robot --output output.xml D:\a\1\s\tests/  # Ensure the path is correct
+    mkdir -p $(ROBOT_REPORTS_DIR)
+    robot --outputdir $(ROBOT_REPORTS_DIR) tests/
   displayName: 'Run Robot Framework Tests'
-
 - task: PublishTestResults@2
+  condition: succeededOrFailed()
   inputs:
-    testResultsFormat: 'Robot'
-    testResultsFiles: '**/output.xml'
-    mergeTestResults: true
-  displayName: 'Publish Test Results'
+    testResultsFormat: 'JUnit'
+    testResultsFiles: '$(ROBOT_REPORTS_DIR)/output.xml'
+    testRunTitle: 'Robot Framework Test Results'
+    
