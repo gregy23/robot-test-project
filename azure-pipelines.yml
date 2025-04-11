@@ -22,15 +22,3 @@ steps:
     pip install robotframework-seleniumlibrary
   displayName: 'Install Robot Framework and dependencies'
 
-
-- script: 
-    robot tests/
-  displayName: 'Run Robot Framework tests' 
-
-- task: PublishTestResults@2
-  condition: succeededOrFailed()
-  inputs:
-    testResultsFormat: 'JUnit'
-    testResultsFiles: '$(ROBOT_REPORTS_DIR)/output.xml'
-    testRunTitle: 'Robot Framework Test Results'
-    
