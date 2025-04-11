@@ -4,8 +4,7 @@ trigger:
       - main  
 
 pool:
-  vmImage: 'windows-latest'  # Or your preferred VM image
-
+  vmImage: 'windows-latest'
 
 variables:
   ROBOT_REPORTS_DIR: 'robot_results'
@@ -15,10 +14,8 @@ steps:
   inputs:
     versionSpec: '3.13.2'
 
-
-- script: 
+- script: |
     python -m pip install --upgrade pip
     pip install robotframework
     pip install robotframework-seleniumlibrary
   displayName: 'Install Robot Framework and dependencies'
-
