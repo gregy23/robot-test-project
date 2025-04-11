@@ -1,7 +1,7 @@
 trigger:
   branches:
     include:
-      - main  
+      - main
 
 pool:
   vmImage: 'windows-latest'
@@ -12,7 +12,7 @@ variables:
 steps:
 - task: UsePythonVersion@0
   inputs:
-    versionSpec: '3.13.2'
+    versionSpec: '3.11'
 
 - script: |
     python -m pip install --upgrade pip
@@ -20,17 +20,6 @@ steps:
     pip install robotframework-seleniumlibrary
   displayName: 'Install Robot Framework and dependencies'
 
-<<<<<<< HEAD
-
 - script: |
-    dir robot_tests   # This is for debugging, listing the directory contents
-  displayName: 'List Robot Tests'
-
-- script: |
-    robot robot_tests/  # Run Robot Framework tests from the robot_tests directory
+    robot robot_tests/
   displayName: 'Run Robot Framework tests'
-=======
-- script: |
-    robot tests/
-  displayName: 'Run Robot Framework tests'
->>>>>>> 874e92f33055aa0d49f291241067d4299fc292d8
