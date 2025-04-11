@@ -71,7 +71,7 @@ Create_employee End-to-End Test
 
 
    #Select branch fields
-   Wait Until Element Is Visible    //*[@id="SelectBranch"]
+   Wait Until Element Is Visible    //*[@id="SelectBranch"] 
    Click Button    //*[@id="SelectBranch"]
    Wait Until Element Is Visible    //*[@id="BranchViewModel"]/div[3]/table/tbody/tr[1]/td[1]/button/span
    Click Element    //*[@id="BranchViewModel"]/div[3]/table/tbody/tr[1]/td[1]/button/span
