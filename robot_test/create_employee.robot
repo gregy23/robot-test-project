@@ -84,7 +84,10 @@ Create_employee End-to-End Test
     Click Element    xpath=//li[.//span[text()='AML - AML']]
 
     Execute JavaScript    window.scrollBy(0, 1000)
+    Wait Until Element Is Visible   //*[@id="btnPostNew"]
     Click Element    //*[@id="btnPostNew"]
+    Sleep    10s
+    
 
     Close All Browsers
 
