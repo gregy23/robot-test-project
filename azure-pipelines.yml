@@ -20,6 +20,16 @@ steps:
     pip install robotframework-seleniumlibrary
   displayName: 'Install Robot Framework and dependencies'
 
+
+- script: |
+    echo "Current directory:"
+    cd
+    echo "Listing contents of repo root:"
+    dir
+    echo "Listing contents of robot_tests (if exists):"
+    dir robot_tests
+  displayName: 'Debug: Show directory contents'
+  
 - script: |
     robot robot_tests/
   displayName: 'Run Robot Framework tests'
