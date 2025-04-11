@@ -20,10 +20,11 @@ steps:
     pip install robotframework-seleniumlibrary
   displayName: 'Install Robot Framework and dependencies'
 
-- script: |
-    dir robot_tests
-  displayName: 'Debug: List Robot Test Files'
 
 - script: |
-    robot robot_tests/
+    dir robot_tests   # This is for debugging, listing the directory contents
+  displayName: 'List Robot Tests'
+
+- script: |
+    robot robot_tests/  # Run Robot Framework tests from the robot_tests directory
   displayName: 'Run Robot Framework tests'
