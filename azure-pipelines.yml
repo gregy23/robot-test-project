@@ -19,3 +19,7 @@ steps:
     pip install robotframework
     pip install robotframework-seleniumlibrary
   displayName: 'Install Robot Framework and dependencies'
+
+- script: |
+    robot tests/
+  displayName: 'Run Robot Framework tests'
