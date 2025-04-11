@@ -86,9 +86,6 @@ Create_employee End-to-End Test
     Execute JavaScript    window.scrollBy(0, 1000)
     Click Element    //*[@id="btnPostNew"]
 
-    Sleep    10s
-
-   
     Close All Browsers
 
 
