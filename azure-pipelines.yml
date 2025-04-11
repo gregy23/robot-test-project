@@ -15,16 +15,18 @@ steps:
   inputs:
     versionSpec: '3.13.2'
 
-- script: |
+
+- script: 
     python -m pip install --upgrade pip
     pip install robotframework
     pip install robotframework-seleniumlibrary
   displayName: 'Install Robot Framework and dependencies'
 
-- script: |
-    mkdir -p $(ROBOT_REPORTS_DIR)
-    robot --outputdir $(ROBOT_REPORTS_DIR) tests/
-  displayName: 'Run Robot Framework Tests'
+
+- script: 
+    robot tests/
+  displayName: 'Run Robot Framework tests' 
+
 - task: PublishTestResults@2
   condition: succeededOrFailed()
   inputs:
