@@ -21,9 +21,5 @@ steps:
   displayName: 'Install Robot Framework and dependencies'
 
 - script: |
-    dir robot_tests
-  displayName: 'Debug: List Robot Test Files'
-
-- script: |
-    robot robot_tests/
+    robot tests/
   displayName: 'Run Robot Framework tests'
