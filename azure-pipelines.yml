@@ -52,17 +52,14 @@ steps:
     }
   displayName: 'Run Robot Framework tests'
   continueOnError: true
-  #6
-- script: |
-    echo "Listing files in $(Build.SourcesDirectory)/robot_results"
-    dir $(Build.SourcesDirectory)/robot_results
-  displayName: 'List Files in robot_results Directory'
-
-# 7. Publish Robot test results (if output.xml is available)
+  #6 publish tes result 
 - task: PublishTestResults@2
-  condition: succeededOrFailed()
   inputs:
     testResultsFormat: 'JUnit'
-    testResultsFiles: '$(ROBOT_REPORTS_DIR)/output.xml'
-    failTaskOnFailedTests: false
-  displayName: 'Publish Robot Test Results'
+    testResultsFiles: '**/output.xml'
+    failTaskOnFailedTests: true
+# publish artifact
+- task: PublishBuildArtifacts@1
+  inputs:
+    pathToPublish: 'output.xml'
+    artifactName: 'RobotResults'
