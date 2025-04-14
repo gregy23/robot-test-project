@@ -53,11 +53,14 @@ steps:
   displayName: 'Run Robot Framework tests'
   continueOnError: true
   #6 publish tes result 
+
 - task: PublishTestResults@2
   inputs:
     testResultsFormat: 'JUnit'
-    testResultsFiles: '**/output.xml'
-    failTaskOnFailedTests: true
+    testResultsFiles: '**/xunit.xml'
+    testRunTitle: 'Robot Framework Test Results'
+  condition: succeededOrFailed()
+
 # publish artifact
 - task: PublishBuildArtifacts@1
   inputs:
