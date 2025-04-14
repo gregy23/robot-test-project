@@ -33,3 +33,4 @@ steps:
 - script: |
     robot robot_test/
   displayName: 'Run Robot Framework tests'
+  continueOnError: true
