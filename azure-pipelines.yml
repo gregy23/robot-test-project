@@ -52,14 +52,24 @@ steps:
     }
   displayName: 'Run Robot Framework tests'
   continueOnError: true
-  #6 publish tes result 
+  
+
+- script: |
+    pip install -r requirements.txt
+    robot -d output tests/
+    rebot --xunit output/xunit.xml output/output.xml
+  displayName: 'Install dependencies and run Robot Framework tests'
 
 - task: PublishTestResults@2
   inputs:
     testResultsFormat: 'JUnit'
-    testResultsFiles: '**/xunit.xml'
+    testResultsFiles: 'output/xunit.xml'
     testRunTitle: 'Robot Framework Test Results'
   condition: succeededOrFailed()
+
+- script: |
+    echo "Listing output directory contents:"
+    ls -R output
 
 # publish artifact
 - task: PublishBuildArtifacts@1
