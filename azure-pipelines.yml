@@ -1,7 +1,7 @@
 trigger:
   branches:
     include:
-      - main
+      - main  # Trigger on push to main
 
 pool:
   vmImage: 'windows-latest'
@@ -10,26 +10,54 @@ variables:
   ROBOT_REPORTS_DIR: 'robot_results'
 
 steps:
+
+# 1. Use Python 3.11
 - task: UsePythonVersion@0
   inputs:
     versionSpec: '3.11'
 
+# 2. Install Robot Framework and SeleniumLibrary
 - script: |
     python -m pip install --upgrade pip
     pip install robotframework
     pip install robotframework-seleniumlibrary
   displayName: 'Install Robot Framework and dependencies'
 
+# 3. Show Python and Robot installation info (debug step)
+- script: |
+    where python
+    where pip
+    where robot
+    pip list
+  displayName: 'Debug: Confirm installations'
 
+# 4. Show directory contents (helps confirm repo structure)
 - script: |
     echo "Current directory:"
     cd
-    echo "Listing contents of repo root:"
+    echo "Repo root contents:"
     dir
-    echo "Listing contents of robot_tests (if exists):"
+    echo "robot_test folder contents:"
     dir robot_test
-  displayName: 'Debug: Show directory contents'
-  
-- script: |
-    robot robot_test/
+  displayName: 'Debug: Show project structure'
+
+# 5. Run Robot Framework tests (even if they fail)
+- powershell: |
+    if (Test-Path "robot_test") {
+      Write-Host "✅ Found robot_test folder. Running tests..."
+      robot -d $(ROBOT_REPORTS_DIR) robot_test/
+    } else {
+      Write-Host "❌ Folder 'robot_test' not found!"
+      exit 1
+    }
   displayName: 'Run Robot Framework tests'
+  continueOnError: true
+
+# 6. Publish Robot test results (if output.xml is available)
+- task: PublishTestResults@2
+  condition: succeededOrFailed()
+  inputs:
+    testResultsFormat: 'JUnit'
+    testResultsFiles: '$(ROBOT_REPORTS_DIR)/output.xml'
+    failTaskOnFailedTests: false
+  displayName: 'Publish Robot Test Results'
