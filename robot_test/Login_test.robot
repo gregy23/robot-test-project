@@ -12,7 +12,7 @@ ${CAPTCHA_BYPASS}    CaptchaBypass
 
 *** Test Cases ***
 login_test End-to-End Test
-    Open Browser    ${URL}    ${BROWSER}
+    Open Browser    ${URL}    edge
     Maximize Browser Window
     Input Text    id=UserName    ${USERNAME}
     Input Password    id=Password    ${PASSWORD}
