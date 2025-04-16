@@ -42,8 +42,8 @@ steps:
   displayName: 'Debug: Show project structure'
 
 - script: |
-    robot --output output.xml --log log.html --report report.html tests/
-  displayName: 'Run Robot Framework Tests'
+    robot --output output.xml --log log.html --report report.html test/
+  displayName: 'Run Robot Framework Test'
   
 - task: PublishTestResults@2
   inputs:
