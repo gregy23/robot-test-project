@@ -3,7 +3,7 @@ Library    SeleniumLibrary
 
 *** Variables ***
 ${URL}               https://sysdevintegral360staging.sscgi.com/
-${USERNAME}          stgadmin
+${USERNAME}          admingreg
 ${PASSWORD}          P@ssw0rd
 ${CAPTCHA_BYPASS}    CaptchaBypass
 
