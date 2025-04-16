@@ -43,7 +43,11 @@ steps:
 
 # 5. Run Robot Framework tests
 - script: |
-    robot --output $(ROBOT_REPORTS_DIR)/output.xml --log $(ROBOT_REPORTS_DIR)/log.html --report $(ROBOT_REPORTS_DIR)/report.html robot_test/
+    robot --variable BROWSER:edge ^
+          --output $(ROBOT_REPORTS_DIR)/output.xml ^
+          --log $(ROBOT_REPORTS_DIR)/log.html ^
+          --report $(ROBOT_REPORTS_DIR)/report.html ^
+          robot_test/
   displayName: 'Run Robot Framework Test'
 
 # 6. Convert to JUnit format for test publishing
