@@ -53,13 +53,6 @@ steps:
   displayName: 'Run Robot Framework tests'
   continueOnError: true
   
-
-- script: |
-    pip install -r requirements.txt
-    robot -d output tests/
-    rebot --xunit output/xunit.xml output/output.xml
-  displayName: 'Install dependencies and run Robot Framework tests'
-
 - task: PublishTestResults@2
   inputs:
     testResultsFormat: 'JUnit'
