@@ -60,9 +60,6 @@ steps:
     testRunTitle: 'Robot Framework Test Results'
   condition: succeededOrFailed()
 
-- script: |
-    echo "Listing output directory contents:"
-    ls -R output
 
 # publish artifact
 - task: PublishBuildArtifacts@1
