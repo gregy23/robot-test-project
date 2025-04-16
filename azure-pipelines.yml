@@ -41,20 +41,26 @@ steps:
     dir robot_test
   displayName: 'Debug: Show project structure'
 
+# 5. Run Robot Framework tests
 - script: |
-    robot --output output.xml --log log.html --report report.html test/
+    robot --output $(ROBOT_REPORTS_DIR)/output.xml --log $(ROBOT_REPORTS_DIR)/log.html --report $(ROBOT_REPORTS_DIR)/report.html robot_test/
   displayName: 'Run Robot Framework Test'
-  
+
+# 6. Convert to JUnit format for test publishing
+- script: |
+    rebot --xunit $(ROBOT_REPORTS_DIR)/xunit.xml $(ROBOT_REPORTS_DIR)/output.xml
+  displayName: 'Convert Robot Output to JUnit'
+
+# 7. Publish test results to Azure DevOps
 - task: PublishTestResults@2
   inputs:
     testResultsFormat: 'JUnit'
-    testResultsFiles: 'output/xunit.xml'
+    testResultsFiles: '$(ROBOT_REPORTS_DIR)/xunit.xml'
     testRunTitle: 'Robot Framework Test Results'
   condition: succeededOrFailed()
 
-
-# publish artifact
+# 8. Publish all Robot output files as an artifact
 - task: PublishBuildArtifacts@1
   inputs:
-    pathToPublish: 'output.xml'
+    pathToPublish: '$(ROBOT_REPORTS_DIR)'
     artifactName: 'RobotResults'
