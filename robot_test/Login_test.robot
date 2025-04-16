@@ -3,6 +3,13 @@ Library    SeleniumLibrary
 Library    String
 Library    OperatingSystem
 
+
+*** Variables ***
+${URL}               https://sysdevintegral360staging.sscgi.com/
+${USERNAME}          admingreg
+${PASSWORD}          P@ssw0rd
+${CAPTCHA_BYPASS}    CaptchaBypass
+
 *** Test Cases ***
 login_test End-to-End Test
     Open Browser    ${URL}    ${BROWSER}
