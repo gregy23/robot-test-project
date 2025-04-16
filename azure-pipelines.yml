@@ -41,17 +41,9 @@ steps:
     dir robot_test
   displayName: 'Debug: Show project structure'
 
-# 5. Run Robot Framework tests (even if they fail)
-- powershell: |
-    if (Test-Path "robot_test") {
-      Write-Host "✅ Found robot_test folder. Running tests..."
-      robot -d $(ROBOT_REPORTS_DIR) robot_test/
-    } else {
-      Write-Host "❌ Folder 'robot_test' not found!"
-      exit 1
-    }
-  displayName: 'Run Robot Framework tests'
-  continueOnError: true
+- script: |
+    robot --output output.xml --log log.html --report report.html tests/
+  displayName: 'Run Robot Framework Tests'
   
 - task: PublishTestResults@2
   inputs:
