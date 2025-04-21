@@ -1,261 +1,162 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<robot generator="Robot 7.2.2 (Python 3.13.2 on win32)" generated="2025-04-21T11:20:57.766374" rpa="false" schemaversion="5">
-<suite id="s1" name="Account Creation" source="c:\Users\macunanan\Documents\Automation\robot_test\Account_Creation.robot">
-<test id="s1-t1" name="Create_employee End-to-End Test" line="18">
+<robot generator="Robot 7.2.2 (Python 3.13.2 on win32)" generated="2025-04-21T11:43:29.292343" rpa="false" schemaversion="5">
+<suite id="s1" name="I360" source="c:\Users\macunanan\Documents\Automation\robot_test\i360.robot">
+<test id="s1-t1" name="i360 End-to-End Test" line="11">
 <kw name="Open Browser" owner="SeleniumLibrary">
-<msg time="2025-04-21T11:20:58.209716" level="INFO">Opening browser 'edge' to base url 'https://sysdevintegral360staging.sscgi.com/'.</msg>
+<msg time="2025-04-21T11:43:29.779007" level="INFO">Opening browser 'edge' to base url 'https://sysdevintegral360staging.sscgi.com/'.</msg>
 <arg>${URL}</arg>
 <arg>edge</arg>
 <doc>Opens a new browser instance to the optional ``url``.</doc>
-<status status="PASS" start="2025-04-21T11:20:58.209098" elapsed="7.291642"/>
+<status status="PASS" start="2025-04-21T11:43:29.777708" elapsed="5.478550"/>
 </kw>
 <kw name="Maximize Browser Window" owner="SeleniumLibrary">
 <doc>Maximizes current browser window.</doc>
-<status status="PASS" start="2025-04-21T11:21:05.504765" elapsed="0.200423"/>
+<status status="PASS" start="2025-04-21T11:43:35.262095" elapsed="0.059662"/>
 </kw>
 <kw name="Input Text" owner="SeleniumLibrary">
-<msg time="2025-04-21T11:21:05.709162" level="INFO">Typing text 'admingreg' into text field 'id=UserName'.</msg>
+<msg time="2025-04-21T11:43:35.329806" level="INFO">Typing text 'admingreg' into text field 'id=UserName'.</msg>
 <arg>id=UserName</arg>
 <arg>${USERNAME}</arg>
 <doc>Types the given ``text`` into the text field identified by ``locator``.</doc>
-<status status="PASS" start="2025-04-21T11:21:05.708372" elapsed="0.268172"/>
+<status status="PASS" start="2025-04-21T11:43:35.329070" elapsed="0.265563"/>
 </kw>
 <kw name="Input Password" owner="SeleniumLibrary">
-<msg time="2025-04-21T11:21:05.981758" level="INFO">Typing password into text field 'id=Password'.</msg>
-<msg time="2025-04-21T11:21:06.048459" level="INFO">Temporally setting log level to: NONE</msg>
+<msg time="2025-04-21T11:43:35.600296" level="INFO">Typing password into text field 'id=Password'.</msg>
+<msg time="2025-04-21T11:43:35.661697" level="INFO">Temporally setting log level to: NONE</msg>
 <arg>id=Password</arg>
 <arg>${PASSWORD}</arg>
 <doc>Types the given password into the text field identified by ``locator``.</doc>
-<status status="PASS" start="2025-04-21T11:21:05.981108" elapsed="0.146145"/>
+<status status="PASS" start="2025-04-21T11:43:35.599561" elapsed="0.714945"/>
 </kw>
 <kw name="Input Text" owner="SeleniumLibrary">
-<msg time="2025-04-21T11:21:06.130879" level="INFO">Typing text 'CaptchaBypass' into text field 'id=UserCaptchaCode'.</msg>
+<msg time="2025-04-21T11:43:36.322305" level="INFO">Typing text 'CaptchaBypass' into text field 'id=UserCaptchaCode'.</msg>
 <arg>id=UserCaptchaCode</arg>
 <arg>${CAPTCHA_BYPASS}</arg>
 <doc>Types the given ``text`` into the text field identified by ``locator``.</doc>
-<status status="PASS" start="2025-04-21T11:21:06.130223" elapsed="0.174060"/>
+<status status="PASS" start="2025-04-21T11:43:36.321732" elapsed="0.475930"/>
 </kw>
 <kw name="Click Button" owner="SeleniumLibrary">
-<msg time="2025-04-21T11:21:06.315482" level="INFO">Clicking button 'id=btnLogins'.</msg>
+<msg time="2025-04-21T11:43:36.799647" level="INFO">Clicking button 'id=btnLogins'.</msg>
 <arg>id=btnLogins</arg>
 <doc>Clicks the button identified by ``locator``.</doc>
-<status status="PASS" start="2025-04-21T11:21:06.314946" elapsed="0.149560"/>
+<status status="PASS" start="2025-04-21T11:43:36.799050" elapsed="0.190997"/>
 </kw>
 <kw name="Wait Until Page Contains Element" owner="SeleniumLibrary">
-<arg>//*[@id="UserManagement"]/span/span[1]</arg>
+<arg>xpath=//span[contains(text(), "Reports")]</arg>
+<arg>timeout=20s</arg>
 <doc>Waits until the element ``locator`` appears on the current page.</doc>
-<status status="PASS" start="2025-04-21T11:21:06.465695" elapsed="1.873696"/>
+<status status="PASS" start="2025-04-21T11:43:36.995352" elapsed="1.618260"/>
 </kw>
 <kw name="Mouse Over" owner="SeleniumLibrary">
-<msg time="2025-04-21T11:21:08.342436" level="INFO">Simulating Mouse Over on element '//*[@id="UserManagement"]/span/span[1]'.</msg>
-<arg>//*[@id="UserManagement"]/span/span[1]</arg>
+<msg time="2025-04-21T11:43:38.615403" level="INFO">Simulating Mouse Over on element 'xpath=//span[contains(text(), "Reports")]'.</msg>
+<arg>xpath=//span[contains(text(), "Reports")]</arg>
 <doc>Simulates hovering the mouse over the element ``locator``.</doc>
-<status status="PASS" start="2025-04-21T11:21:08.341797" elapsed="0.310049"/>
-</kw>
-<kw name="Wait Until Page Contains Element" owner="SeleniumLibrary">
-<arg>//*[@id="USER"]/span/span[1]</arg>
-<doc>Waits until the element ``locator`` appears on the current page.</doc>
-<status status="PASS" start="2025-04-21T11:21:08.653237" elapsed="0.028645"/>
-</kw>
-<kw name="Mouse Over" owner="SeleniumLibrary">
-<msg time="2025-04-21T11:21:08.683841" level="INFO">Simulating Mouse Over on element '//*[@id="USER"]/span/span[1]'.</msg>
-<arg>//*[@id="USER"]/span/span[1]</arg>
-<doc>Simulates hovering the mouse over the element ``locator``.</doc>
-<status status="PASS" start="2025-04-21T11:21:08.683186" elapsed="0.287597"/>
-</kw>
-<kw name="Wait Until Page Contains Element" owner="SeleniumLibrary">
-<arg>//*[@id="Person/Index"]/a/span</arg>
-<doc>Waits until the element ``locator`` appears on the current page.</doc>
-<status status="PASS" start="2025-04-21T11:21:08.972979" elapsed="0.012716"/>
-</kw>
-<kw name="Mouse Over" owner="SeleniumLibrary">
-<msg time="2025-04-21T11:21:08.986658" level="INFO">Simulating Mouse Over on element '//*[@id="Person/Index"]/a/span'.</msg>
-<arg>//*[@id="Person/Index"]/a/span</arg>
-<doc>Simulates hovering the mouse over the element ``locator``.</doc>
-<status status="PASS" start="2025-04-21T11:21:08.986290" elapsed="0.295111"/>
+<status status="PASS" start="2025-04-21T11:43:38.614791" elapsed="0.315365"/>
 </kw>
 <kw name="Click Element" owner="SeleniumLibrary">
-<msg time="2025-04-21T11:21:09.282604" level="INFO">Clicking element '//*[@id="Person/Index"]/a/span'.</msg>
-<arg>//*[@id="Person/Index"]/a/span</arg>
+<msg time="2025-04-21T11:43:38.932429" level="INFO">Clicking element 'xpath=//*[@id="BuiltInReport/Index"]/a/span'.</msg>
+<arg>xpath=//*[@id="BuiltInReport/Index"]/a/span</arg>
 <doc>Click the element identified by ``locator``.</doc>
-<status status="PASS" start="2025-04-21T11:21:09.282084" elapsed="1.434895"/>
+<status status="PASS" start="2025-04-21T11:43:38.931783" elapsed="1.248523"/>
 </kw>
 <kw name="Wait Until Element Is Visible" owner="SeleniumLibrary">
-<arg>//*[@id="btnCreate"]</arg>
+<arg>xpath=//*[@id="createForm"]/div/div[1]/div/div/table/tbody/tr[1]/td[2]/span/button</arg>
 <arg>timeout=10s</arg>
 <doc>Waits until the element ``locator`` is visible.</doc>
-<status status="PASS" start="2025-04-21T11:21:10.720290" elapsed="0.053387"/>
+<status status="PASS" start="2025-04-21T11:43:40.183875" elapsed="0.043678"/>
 </kw>
 <kw name="Click Button" owner="SeleniumLibrary">
-<msg time="2025-04-21T11:21:10.774930" level="INFO">Clicking button '//*[@id="btnCreate"]'.</msg>
-<arg>//*[@id="btnCreate"]</arg>
+<msg time="2025-04-21T11:43:40.229561" level="INFO">Clicking button 'xpath=//*[@id="createForm"]/div/div[1]/div/div/table/tbody/tr[1]/td[2]/span/button'.</msg>
+<arg>xpath=//*[@id="createForm"]/div/div[1]/div/div/table/tbody/tr[1]/td[2]/span/button</arg>
 <doc>Clicks the button identified by ``locator``.</doc>
-<status status="PASS" start="2025-04-21T11:21:10.774391" elapsed="0.982781"/>
+<status status="PASS" start="2025-04-21T11:43:40.228916" elapsed="0.180946"/>
 </kw>
 <kw name="Wait Until Element Is Visible" owner="SeleniumLibrary">
-<msg time="2025-04-21T11:21:17.055023" level="INFO" html="true">&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td colspan="3"&gt;&lt;a href="selenium-screenshot-38.png"&gt;&lt;img src="selenium-screenshot-38.png" width="800px"&gt;&lt;/a&gt;</msg>
-<msg time="2025-04-21T11:21:17.055555" level="FAIL">Element '//*[@id="createForm"]/div[2]/div[2]/table/tbody/tr[1]/td[2]/span/button' not visible after 5 seconds.</msg>
-<arg>//*[@id="createForm"]/div[2]/div[2]/table/tbody/tr[1]/td[2]/span/button</arg>
-<doc>Waits until the element ``locator`` is visible.</doc>
-<status status="FAIL" start="2025-04-21T11:21:11.774935" elapsed="5.287219">Element '//*[@id="createForm"]/div[2]/div[2]/table/tbody/tr[1]/td[2]/span/button' not visible after 5 seconds.</status>
-</kw>
-<kw name="Click Element" owner="SeleniumLibrary">
-<arg>xpath=//*[@id="createForm"]/div[2]/div[2]/table/tbody/tr[1]/td[2]/span/button</arg>
-<doc>Click the element identified by ``locator``.</doc>
-<status status="NOT RUN" start="2025-04-21T11:21:17.064749" elapsed="0.000331"/>
-</kw>
-<kw name="Wait Until Element Is Visible" owner="SeleniumLibrary">
-<arg>//*[@id="EmployeeTitleId_listbox"]/li[5]/span</arg>
-<doc>Waits until the element ``locator`` is visible.</doc>
-<status status="NOT RUN" start="2025-04-21T11:21:17.066664" elapsed="0.000269"/>
-</kw>
-<kw name="Click Element" owner="SeleniumLibrary">
-<arg>//*[@id="EmployeeTitleId_listbox"]/li[5]/span</arg>
-<doc>Click the element identified by ``locator``.</doc>
-<status status="NOT RUN" start="2025-04-21T11:21:17.069173" elapsed="0.000253"/>
-</kw>
-<kw name="Input Text" owner="SeleniumLibrary">
-<arg>//*[@id="LastName"]</arg>
-<arg>${LASTNAME}</arg>
-<doc>Types the given ``text`` into the text field identified by ``locator``.</doc>
-<status status="NOT RUN" start="2025-04-21T11:21:17.071162" elapsed="0.000351"/>
-</kw>
-<kw name="Input Text" owner="SeleniumLibrary">
-<arg>//*[@id="FirstName"]</arg>
-<arg>${FIRSTNAME}</arg>
-<doc>Types the given ``text`` into the text field identified by ``locator``.</doc>
-<status status="NOT RUN" start="2025-04-21T11:21:17.072728" elapsed="0.000298"/>
-</kw>
-<kw name="Input Text" owner="SeleniumLibrary">
-<arg>//*[@id="ContactNo"]</arg>
-<arg>${CONTACTNUMBER}</arg>
-<doc>Types the given ``text`` into the text field identified by ``locator``.</doc>
-<status status="NOT RUN" start="2025-04-21T11:21:17.077344" elapsed="0.000312"/>
-</kw>
-<kw name="Input Text" owner="SeleniumLibrary">
-<arg>//*[@id="Email"]</arg>
-<arg>${EMAIL}</arg>
-<doc>Types the given ``text`` into the text field identified by ``locator``.</doc>
-<status status="NOT RUN" start="2025-04-21T11:21:17.079295" elapsed="0.000294"/>
-</kw>
-<kw name="Wait Until Element Is Visible" owner="SeleniumLibrary">
-<arg>//*[@id="createForm"]/div[4]/div[1]/table/tbody/tr[2]/td[2]/span/button</arg>
-<doc>Waits until the element ``locator`` is visible.</doc>
-<status status="NOT RUN" start="2025-04-21T11:21:17.081334" elapsed="0.000852"/>
-</kw>
-<kw name="Click Element" owner="SeleniumLibrary">
-<arg>//*[@id="createForm"]/div[4]/div[1]/table/tbody/tr[2]/td[2]/span/button</arg>
-<doc>Click the element identified by ``locator``.</doc>
-<status status="NOT RUN" start="2025-04-21T11:21:17.087376" elapsed="0.000232"/>
-</kw>
-<kw name="Wait Until Element Is Visible" owner="SeleniumLibrary">
-<arg>xpath=//span[@class='k-list-item-text' and text()='AML201 - AML Designation']</arg>
-<doc>Waits until the element ``locator`` is visible.</doc>
-<status status="NOT RUN" start="2025-04-21T11:21:17.090149" elapsed="0.000270"/>
-</kw>
-<kw name="Click Element" owner="SeleniumLibrary">
-<arg>xpath=//span[@class='k-list-item-text' and text()='AML201 - AML Designation']</arg>
-<doc>Click the element identified by ``locator``.</doc>
-<status status="NOT RUN" start="2025-04-21T11:21:17.091678" elapsed="0.000362"/>
-</kw>
-<kw name="Wait Until Element Is Visible" owner="SeleniumLibrary">
-<arg>//*[@id="createForm"]/div[4]/div[1]/table/tbody/tr[3]/td[2]/span/button</arg>
-<doc>Waits until the element ``locator`` is visible.</doc>
-<status status="NOT RUN" start="2025-04-21T11:21:17.094579" elapsed="0.000293"/>
-</kw>
-<kw name="Click Button" owner="SeleniumLibrary">
-<arg>//*[@id="createForm"]/div[4]/div[1]/table/tbody/tr[3]/td[2]/span/button</arg>
-<doc>Clicks the button identified by ``locator``.</doc>
-<status status="NOT RUN" start="2025-04-21T11:21:17.097184" elapsed="0.000277"/>
-</kw>
-<kw name="Wait Until Element Is Visible" owner="SeleniumLibrary">
-<arg>//*[@id="EmployeeStatusId_listbox"]/li[5]</arg>
-<doc>Waits until the element ``locator`` is visible.</doc>
-<status status="NOT RUN" start="2025-04-21T11:21:17.100958" elapsed="0.000286"/>
-</kw>
-<kw name="Click Element" owner="SeleniumLibrary">
-<arg>//*[@id="EmployeeStatusId_listbox"]/li[5]</arg>
-<doc>Click the element identified by ``locator``.</doc>
-<status status="NOT RUN" start="2025-04-21T11:21:17.103297" elapsed="0.000257"/>
-</kw>
-<kw name="Wait Until Element Is Visible" owner="SeleniumLibrary">
-<arg>//*[@id="SelectBranch"]</arg>
+<arg>xpath=//*[@id="reportcatalogs_listbox"]/li[4]</arg>
 <arg>timeout=10s</arg>
 <doc>Waits until the element ``locator`` is visible.</doc>
-<status status="NOT RUN" start="2025-04-21T11:21:17.104568" elapsed="0.000300"/>
+<status status="PASS" start="2025-04-21T11:43:40.416027" elapsed="0.057314"/>
 </kw>
-<kw name="Scroll Element Into View" owner="SeleniumLibrary">
-<arg>//*[@id="SelectBranch"]</arg>
-<doc>Scrolls the element identified by ``locator`` into view.</doc>
-<status status="NOT RUN" start="2025-04-21T11:21:17.105561" elapsed="0.000210"/>
-</kw>
-<kw name="Click Button" owner="SeleniumLibrary">
-<arg>//*[@id="SelectBranch"]</arg>
-<doc>Clicks the button identified by ``locator``.</doc>
-<status status="NOT RUN" start="2025-04-21T11:21:17.106645" elapsed="0.000208"/>
+<kw name="Click Element" owner="SeleniumLibrary">
+<msg time="2025-04-21T11:43:40.522381" level="INFO">Clicking element 'xpath=//*[@id="reportcatalogs_listbox"]/li[4]'.</msg>
+<arg>xpath=//*[@id="reportcatalogs_listbox"]/li[4]</arg>
+<doc>Click the element identified by ``locator``.</doc>
+<status status="PASS" start="2025-04-21T11:43:40.521903" elapsed="0.210284"/>
 </kw>
 <kw name="Wait Until Element Is Visible" owner="SeleniumLibrary">
-<arg>//*[@id="BranchViewModel"]/div[3]/table/tbody/tr[1]/td[1]/button/span</arg>
+<arg>xpath=//*[@id="createForm"]/div/div[1]/div/div/table/tbody/tr[2]/td[2]/span/button</arg>
+<doc>Waits until the element ``locator`` is visible.</doc>
+<status status="PASS" start="2025-04-21T11:43:40.736786" elapsed="0.112704"/>
+</kw>
+<kw name="Click Button" owner="SeleniumLibrary">
+<msg time="2025-04-21T11:43:40.852170" level="INFO">Clicking button 'xpath=//*[@id="createForm"]/div/div[1]/div/div/table/tbody/tr[2]/td[2]/span/button'.</msg>
+<arg>xpath=//*[@id="createForm"]/div/div[1]/div/div/table/tbody/tr[2]/td[2]/span/button</arg>
+<doc>Clicks the button identified by ``locator``.</doc>
+<status status="PASS" start="2025-04-21T11:43:40.851642" elapsed="0.149573"/>
+</kw>
+<kw name="Wait Until Element Is Visible" owner="SeleniumLibrary">
+<arg>xpath=//*[@id="ReportNameId_listbox"]/li[2]</arg>
 <arg>timeout=10s</arg>
 <doc>Waits until the element ``locator`` is visible.</doc>
-<status status="NOT RUN" start="2025-04-21T11:21:17.107583" elapsed="0.000247"/>
-</kw>
-<kw name="Scroll Element Into View" owner="SeleniumLibrary">
-<arg>//*[@id="BranchViewModel"]/div[3]/table/tbody/tr[1]/td[1]/button/span</arg>
-<doc>Scrolls the element identified by ``locator`` into view.</doc>
-<status status="NOT RUN" start="2025-04-21T11:21:17.109706" elapsed="0.000281"/>
+<status status="PASS" start="2025-04-21T11:43:41.002905" elapsed="0.033458"/>
 </kw>
 <kw name="Click Element" owner="SeleniumLibrary">
-<arg>//*[@id="BranchViewModel"]/div[3]/table/tbody/tr[1]/td[1]/button/span</arg>
+<msg time="2025-04-21T11:43:41.037651" level="INFO">Clicking element 'xpath=//*[@id="ReportNameId_listbox"]/li[2]'.</msg>
+<arg>xpath=//*[@id="ReportNameId_listbox"]/li[2]</arg>
 <doc>Click the element identified by ``locator``.</doc>
-<status status="NOT RUN" start="2025-04-21T11:21:17.110715" elapsed="0.000261"/>
+<status status="PASS" start="2025-04-21T11:43:41.037118" elapsed="0.136697"/>
 </kw>
 <kw name="Wait Until Element Is Visible" owner="SeleniumLibrary">
-<arg>//*[@id="createForm"]/div[4]/div[2]/table/tbody/tr[3]/td[2]/span/button</arg>
+<arg>xpath=//*[@id="reportParameterDiv"]/div/div/div/table/tbody/tr/td[2]/span/button[2]</arg>
+<arg>timeout=10s</arg>
 <doc>Waits until the element ``locator`` is visible.</doc>
-<status status="NOT RUN" start="2025-04-21T11:21:17.112159" elapsed="0.001226"/>
+<status status="PASS" start="2025-04-21T11:43:41.179385" elapsed="0.245601"/>
+</kw>
+<kw name="Click Element" owner="SeleniumLibrary">
+<msg time="2025-04-21T11:43:41.428170" level="INFO">Clicking element 'xpath=//*[@id="reportParameterDiv"]/div/div/div/table/tbody/tr/td[2]/span/button[2]'.</msg>
+<arg>xpath=//*[@id="reportParameterDiv"]/div/div/div/table/tbody/tr/td[2]/span/button[2]</arg>
+<doc>Click the element identified by ``locator``.</doc>
+<status status="PASS" start="2025-04-21T11:43:41.427609" elapsed="0.094824"/>
+</kw>
+<kw name="Wait Until Element Is Visible" owner="SeleniumLibrary">
+<arg>xpath=//a[@class='k-link' and @data-value='2025/3/3' and text()='3']</arg>
+<doc>Waits until the element ``locator`` is visible.</doc>
+<status status="PASS" start="2025-04-21T11:43:41.526272" elapsed="0.250375"/>
+</kw>
+<kw name="Click Element" owner="SeleniumLibrary">
+<msg time="2025-04-21T11:43:41.777795" level="INFO">Clicking element 'xpath=//a[@class='k-link' and @data-value='2025/3/3' and text()='3']'.</msg>
+<arg>xpath=//a[@class='k-link' and @data-value='2025/3/3' and text()='3']</arg>
+<doc>Click the element identified by ``locator``.</doc>
+<status status="PASS" start="2025-04-21T11:43:41.777339" elapsed="0.083958"/>
 </kw>
 <kw name="Click Button" owner="SeleniumLibrary">
-<arg>//*[@id="createForm"]/div[4]/div[2]/table/tbody/tr[3]/td[2]/span/button</arg>
+<msg time="2025-04-21T11:43:41.863936" level="INFO">Clicking button '//*[@id="btnGenerateReport"]'.</msg>
+<arg>//*[@id="btnGenerateReport"]</arg>
 <doc>Clicks the button identified by ``locator``.</doc>
-<status status="NOT RUN" start="2025-04-21T11:21:17.116995" elapsed="0.000221"/>
+<status status="PASS" start="2025-04-21T11:43:41.863399" elapsed="0.139984"/>
 </kw>
-<kw name="Wait Until Element Is Visible" owner="SeleniumLibrary">
-<arg>xpath=//li[.//span[text()='AML - AML']]</arg>
-<doc>Waits until the element ``locator`` is visible.</doc>
-<status status="NOT RUN" start="2025-04-21T11:21:17.118285" elapsed="0.000242"/>
+<kw name="Sleep" owner="BuiltIn">
+<msg time="2025-04-21T11:43:52.009091" level="INFO">Slept 10 seconds.</msg>
+<arg>10s</arg>
+<doc>Pauses the test executed for the given time.</doc>
+<status status="PASS" start="2025-04-21T11:43:42.005384" elapsed="10.006401"/>
 </kw>
-<kw name="Click Element" owner="SeleniumLibrary">
-<arg>xpath=//li[.//span[text()='AML - AML']]</arg>
-<doc>Click the element identified by ``locator``.</doc>
-<status status="NOT RUN" start="2025-04-21T11:21:17.120521" elapsed="0.000341"/>
+<kw name="Close Browser" owner="SeleniumLibrary">
+<doc>Closes the current browser.</doc>
+<status status="PASS" start="2025-04-21T11:43:52.019212" elapsed="2.554494"/>
 </kw>
-<kw name="Execute Javascript" owner="SeleniumLibrary">
-<arg>window.scrollBy(0, 1000)</arg>
-<doc>Executes the given JavaScript code with possible arguments.</doc>
-<status status="NOT RUN" start="2025-04-21T11:21:17.122946" elapsed="0.000287"/>
-</kw>
-<kw name="Click Element" owner="SeleniumLibrary">
-<arg>//*[@id="btnPostNew"]</arg>
-<doc>Click the element identified by ``locator``.</doc>
-<status status="NOT RUN" start="2025-04-21T11:21:17.124101" elapsed="0.000233"/>
-</kw>
-<kw name="Close All Browsers" owner="SeleniumLibrary">
-<doc>Closes all open browsers and resets the browser cache.</doc>
-<status status="NOT RUN" start="2025-04-21T11:21:17.126673" elapsed="0.000340"/>
-</kw>
-<status status="FAIL" start="2025-04-21T11:20:58.207261" elapsed="18.921228">Element '//*[@id="createForm"]/div[2]/div[2]/table/tbody/tr[1]/td[2]/span/button' not visible after 5 seconds.</status>
+<status status="PASS" start="2025-04-21T11:43:29.773342" elapsed="24.802636"/>
 </test>
-<status status="FAIL" start="2025-04-21T11:20:57.772413" elapsed="19.359543"/>
+<status status="PASS" start="2025-04-21T11:43:29.301348" elapsed="25.281737"/>
 </suite>
 <statistics>
 <total>
-<stat pass="0" fail="1" skip="0">All Tests</stat>
+<stat pass="1" fail="0" skip="0">All Tests</stat>
 </total>
 <tag>
 </tag>
 <suite>
-<stat name="Account Creation" id="s1" pass="0" fail="1" skip="0">Account Creation</stat>
+<stat name="I360" id="s1" pass="1" fail="0" skip="0">I360</stat>
 </suite>
 </statistics>
 <errors>
