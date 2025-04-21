@@ -3,14 +3,17 @@ trigger: none  # Don’t trigger on code changes
 resources:
   pipelines:
     - pipeline: AutomatedTesting
-      source: AutomatedTesting        # Must match pipeline A's name
+      source: AutomatedTesting        # Name of the triggering pipeline
       trigger:
         branches:
           include:
-            - main
+            - main                   # Trigger only when 'main' in AutomatedTesting runs
 
 variables:
   ROBOT_REPORTS_DIR: 'robot_results'
+
+pool:
+  vmImage: 'windows-latest'
 
 steps:
 
@@ -52,12 +55,13 @@ steps:
           --report $(ROBOT_REPORTS_DIR)/report.html ^
           robot_test/
   displayName: 'Run Robot Framework Test'
-  continueOnError: true 
+  continueOnError: true  # Continue even if tests fail
 
 # 6. Convert to JUnit format for test publishing
 - script: |
     rebot --xunit $(ROBOT_REPORTS_DIR)/xunit.xml $(ROBOT_REPORTS_DIR)/output.xml
   displayName: 'Convert Robot Output to JUnit'
+  condition: always()  # Always run even if previous step fails
 
 # 7. Publish test results to Azure DevOps
 - task: PublishTestResults@2
@@ -65,10 +69,11 @@ steps:
     testResultsFormat: 'JUnit'
     testResultsFiles: '$(ROBOT_REPORTS_DIR)/xunit.xml'
     testRunTitle: 'Robot Framework Test Results'
-  condition: succeededOrFailed()
+  condition: always()  # Always run
 
 # 8. Publish all Robot output files as an artifact
 - task: PublishBuildArtifacts@1
   inputs:
     pathToPublish: '$(ROBOT_REPORTS_DIR)'
     artifactName: 'RobotResults'
+  condition: always()  # Always run
