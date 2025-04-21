@@ -2,8 +2,8 @@ trigger: none  # Don’t trigger on code changes
 
 resources:
   pipelines:
-    - pipeline: AutomatedTesting
-      source: AutomatedTesting        # Name of the triggering pipeline
+    - pipeline: AutomatedTesting-.NET Desktop-CI
+      source: AutomatedTesting-.NET Desktop-CI      
       trigger:
         branches:
           include:
