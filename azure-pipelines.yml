@@ -40,6 +40,7 @@ steps:
     echo "robot_test folder contents:"
     dir robot_test
   displayName: 'Debug: Show project structure'
+  #5. run the test scripts
 
 - script: |
     robot --variable BROWSER:edge ^
@@ -49,6 +50,13 @@ steps:
           robot_test/
   displayName: 'Run Robot Framework Test'
   continueOnError: true 
+  
+  
+- task: CmdLine@2
+  inputs:
+    script: |
+      robot tests/
+  continueOnError: true
 
 # 6. Convert to JUnit format for test publishing
 - script: |
