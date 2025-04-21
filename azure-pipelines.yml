@@ -55,7 +55,7 @@ steps:
 - task: CmdLine@2
   inputs:
     script: |
-      robot tests/
+      robot test/
   continueOnError: true
 
 # 6. Convert to JUnit format for test publishing
