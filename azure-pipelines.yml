@@ -37,4 +37,61 @@ steps:
 # 3. Install Robot Framework and SeleniumLibrary with fail-fast
 - script: |
     python -m pip install --upgrade pip || exit 1
-    pip install
+    pip install robotframework==6.1.1 || exit 1
+    pip install robotframework-seleniumlibrary==6.1.2 || exit 1
+  displayName: 'Install Robot Framework and dependencies with fail-fast'
+
+# 4. Debug: Confirm installations
+- script: |
+    where python
+    where pip
+    where robot
+    pip list
+  displayName: 'Debug: Confirm installations'
+
+# 5. Debug: Show project structure
+- script: |
+    echo "Current directory:"
+    cd
+    echo "Repo root contents:"
+    dir
+    echo "robot_test folder contents:"
+    dir robot_test
+  displayName: 'Debug: Show project structure'
+
+# 6. Ensure report directory exists
+- script: |
+    if not exist "$(ROBOT_REPORTS_DIR)" mkdir "$(ROBOT_REPORTS_DIR)"
+  displayName: 'Ensure robot_results directory exists'
+
+# 7. Run Robot Framework Test
+- script: |
+    robot --variable BROWSER:edge ^
+          --output "$(ROBOT_REPORTS_DIR)\output.xml" ^
+          --log "$(ROBOT_REPORTS_DIR)\log.html" ^
+          --report "$(ROBOT_REPORTS_DIR)\report.html" ^
+          --screenshot "$(ROBOT_REPORTS_DIR)\screenshots" ^
+          robot_test/
+  displayName: 'Run Robot Framework Test'
+  continueOnError: true  # Continue even if tests fail
+
+# 8. Convert Robot Output to JUnit
+- script: |
+    rebot --xunit "$(ROBOT_REPORTS_DIR)\xunit.xml" "$(ROBOT_REPORTS_DIR)\output.xml"
+  displayName: 'Convert Robot Output to JUnit'
+  condition: always()
+
+# 9. Publish test results
+- task: PublishTestResults@2
+  inputs:
+    testResultsFormat: 'JUnit'
+    testResultsFiles: '$(ROBOT_REPORTS_DIR)\xunit.xml'
+    testRunTitle: 'Robot Framework Test Results'
+  condition: always()
+
+# 10. Publish all Robot output files as artifacts
+- task: PublishBuildArtifacts@1
+  inputs:
+    pathToPublish: '$(ROBOT_REPORTS_DIR)'
+    artifactName: 'RobotResults'
+  condition: always()
