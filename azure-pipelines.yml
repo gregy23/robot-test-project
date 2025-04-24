@@ -70,7 +70,6 @@ steps:
           --output "$(ROBOT_REPORTS_DIR)\output.xml" ^
           --log "$(ROBOT_REPORTS_DIR)\log.html" ^
           --report "$(ROBOT_REPORTS_DIR)\report.html" ^
-          --screenshot "$(ROBOT_REPORTS_DIR)\screenshots" ^
           robot_test/
   displayName: 'Run Robot Framework Test'
   continueOnError: true  # Continue even if tests fail
