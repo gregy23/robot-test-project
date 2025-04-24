@@ -8,7 +8,6 @@ resources:
 
 variables:
   ROBOT_REPORTS_DIR: 'robot_results'
-  rollbackNeeded: false  # Variable to control rollback
 
 pool:
   vmImage: 'windows-latest'
@@ -20,14 +19,19 @@ steps:
   inputs:
     versionSpec: '3.11'
 
-# 2. Install Robot Framework and SeleniumLibrary
+# 2. Install Microsoft Edge WebDriver (latest version)
 - script: |
-    python -m pip install --upgrade pip
-    pip install robotframework==6.1.1
-    pip install robotframework-seleniumlibrary==6.1.2
-  displayName: 'Install Robot Framework and dependencies'
+    choco install microsoft-edge-driver -y
+  displayName: 'Install Edge WebDriver'
 
-# 3. Debug: Confirm installations
+# 3. Install Robot Framework and SeleniumLibrary with fail-fast
+- script: |
+    python -m pip install --upgrade pip || exit 1
+    pip install robotframework==6.1.1 || exit 1
+    pip install robotframework-seleniumlibrary==6.1.2 || exit 1
+  displayName: 'Install Robot Framework and dependencies with fail-fast'
+
+# 4. Debug: Confirm installations
 - script: |
     where python
     where pip
@@ -35,7 +39,7 @@ steps:
     pip list
   displayName: 'Debug: Confirm installations'
 
-# 4. Debug: Show project structure
+# 5. Debug: Show project structure
 - script: |
     echo "Current directory:"
     cd
@@ -45,58 +49,11 @@ steps:
     dir robot_test
   displayName: 'Debug: Show project structure'
 
-# 5. Ensure report directory exists
+# 6. Ensure report directory exists
 - script: |
     if not exist "$(ROBOT_REPORTS_DIR)" mkdir "$(ROBOT_REPORTS_DIR)"
   displayName: 'Ensure robot_results directory exists'
 
-# 6. Run Robot Framework Test
+# 7. Run Robot Framework Test
 - script: |
-    robot --variable BROWSER:edge ^
-          --output "$(ROBOT_REPORTS_DIR)\output.xml" ^
-          --log "$(ROBOT_REPORTS_DIR)\log.html" ^
-          --report "$(ROBOT_REPORTS_DIR)\report.html" ^
-          robot_test/
-  displayName: 'Run Robot Framework Test'
-  continueOnError: true  # Continue even if tests fail
-
-# 7. Convert Robot Output to JUnit
-- script: |
-    rebot --xunit "$(ROBOT_REPORTS_DIR)\xunit.xml" "$(ROBOT_REPORTS_DIR)\output.xml"
-  displayName: 'Convert Robot Output to JUnit'
-  condition: always()
-
-# 8. Publish test results
-- task: PublishTestResults@2
-  inputs:
-    testResultsFormat: 'JUnit'
-    testResultsFiles: '$(ROBOT_REPORTS_DIR)\xunit.xml'
-    testRunTitle: 'Robot Framework Test Results'
-  condition: always()
-
-# 9. Check for test failures
-- script: |
-    [xml]$testResults = Get-Content "$(ROBOT_REPORTS_DIR)\output.xml"
-    $failures = $testResults.robot.tests.test.failures
-    if ($failures -gt 0) {
-      Write-Host "##vso[task.setvariable variable=rollbackNeeded]true"
-    } else {
-      Write-Host "##vso[task.setvariable variable=rollbackNeeded]false"
-    }
-  displayName: 'Check Test Failures'
-
-# 10. Rollback Deployment if Tests Failed
-- script: |
-    echo "Rolling back to previous stable version..."
-    # Add rollback logic here to deploy previous version
-    # For example, using Azure CLI to deploy the last stable version:
-    az webapp deploy --resource-group <resource-group> --name <webapp-name> --src <previous-version-artifact>
-  displayName: 'Rollback Deployment'
-  condition: eq(variables['rollbackNeeded'], 'true')
-
-# 11. Publish all Robot output files as artifacts
-- task: PublishBuildArtifacts@1
-  inputs:
-    pathToPublish: '$(ROBOT_REPORTS_DIR)'
-    artifactName: 'RobotResults'
-  condition: always()
+    robot --variable BROWSER:
