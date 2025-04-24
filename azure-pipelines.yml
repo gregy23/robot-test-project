@@ -19,6 +19,12 @@ steps:
   inputs:
     versionSpec: '3.11'
 
+# Ensure Chocolatey is installed (if needed)
+- script: |
+    Set-ExecutionPolicy Bypass -Scope Process -Force;
+    iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
+  displayName: 'Install Chocolatey (if needed)'
+
 # 2. Install Microsoft Edge WebDriver (latest version)
 - script: |
     choco install microsoft-edge-driver -y
@@ -56,4 +62,32 @@ steps:
 
 # 7. Run Robot Framework Test
 - script: |
-    robot --variable BROWSER:
+    robot --variable BROWSER:edge ^
+          --output "$(ROBOT_REPORTS_DIR)\output.xml" ^
+          --log "$(ROBOT_REPORTS_DIR)\log.html" ^
+          --report "$(ROBOT_REPORTS_DIR)\report.html" ^
+          --screenshot "$(ROBOT_REPORTS_DIR)\screenshots" ^
+          robot_test/
+  displayName: 'Run Robot Framework Test'
+  continueOnError: true  # Continue even if tests fail
+
+# 8. Convert Robot Output to JUnit
+- script: |
+    rebot --xunit "$(ROBOT_REPORTS_DIR)\xunit.xml" "$(ROBOT_REPORTS_DIR)\output.xml"
+  displayName: 'Convert Robot Output to JUnit'
+  condition: always()
+
+# 9. Publish test results
+- task: PublishTestResults@2
+  inputs:
+    testResultsFormat: 'JUnit'
+    testResultsFiles: '$(ROBOT_REPORTS_DIR)\xunit.xml'
+    testRunTitle: 'Robot Framework Test Results'
+  condition: always()
+
+# 10. Publish all Robot output files as artifacts
+- task: PublishBuildArtifacts@1
+  inputs:
+    pathToPublish: '$(ROBOT_REPORTS_DIR)'
+    artifactName: 'RobotResults'
+  condition: always()
