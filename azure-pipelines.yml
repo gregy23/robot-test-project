@@ -19,8 +19,8 @@ steps:
   inputs:
     versionSpec: '3.11'
 
-# Ensure Chocolatey is installed (if needed)
-- script: |
+# Ensure Chocolatey is installed (if needed) using PowerShell
+- powershell: |
     Set-ExecutionPolicy Bypass -Scope Process -Force;
     iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
   displayName: 'Install Chocolatey (if needed)'
