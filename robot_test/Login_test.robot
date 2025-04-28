@@ -5,7 +5,7 @@ Library    OperatingSystem
 
 
 *** Variables ***
-${URL}               https://sysdevintegral360staging.sscgi.com/
+${URL}               https://sysdevintegral360dev.sscgi.com/
 ${USERNAME}          admingreg
 ${PASSWORD}          P@ssw0rd
 ${CAPTCHA_BYPASS}    CaptchaBypass
@@ -19,5 +19,4 @@ login_test End-to-End Test
     Input Text    id=UserCaptchaCode    ${CAPTCHA_BYPASS}
     Click Button    id=btnLogins
     Wait Until Page Contains Element    id=UserManagement    timeout=20s
-    Sleep    10s
     Close Browser
