@@ -1,13 +1,16 @@
-trigger:
-  branches:
-    include:
-      - main  # Trigger on push to main
+trigger: none  # Don't trigger on code changes
 
-pool:
-  vmImage: 'windows-latest'
+resources:
+  pipelines:
+    - pipeline: AutomatedTestingPipeline  # Alias used if needed in jobs
+      source: AutomatedTesting-.NET Desktop-CI
+      trigger: true  # Trigger when the source pipeline completes
 
 variables:
   ROBOT_REPORTS_DIR: 'robot_results'
+
+pool:
+  vmImage: 'windows-latest'
 
 steps:
 
@@ -16,14 +19,29 @@ steps:
   inputs:
     versionSpec: '3.11'
 
-# 2. Install Robot Framework and SeleniumLibrary
-- script: |
-    python -m pip install --upgrade pip
-    pip install robotframework
-    pip install robotframework-seleniumlibrary
-  displayName: 'Install Robot Framework and dependencies'
+# 2. Install Microsoft Edge WebDriver manually (Chocolatey not reliable)
+- powershell: |
+    $edgeVersion = (Get-Item "C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe").VersionInfo.ProductVersion
+    Write-Host "Detected Edge version: $edgeVersion"
 
-# 3. Show Python and Robot installation info (debug step)
+    $url = "https://msedgedriver.azureedge.net/$edgeVersion/edgedriver_win64.zip"
+    Write-Host "Downloading WebDriver from $url"
+
+    Invoke-WebRequest -Uri $url -OutFile "edgedriver.zip"
+    Expand-Archive -Path "edgedriver.zip" -DestinationPath "$(Build.SourcesDirectory)\edgedriver" -Force
+
+    # Add WebDriver folder to PATH
+    $env:PATH += ";$(Build.SourcesDirectory)\edgedriver"
+  displayName: 'Install Edge WebDriver manually'
+
+# 3. Install Robot Framework and SeleniumLibrary with fail-fast
+- script: |
+    python -m pip install --upgrade pip || exit 1
+    pip install robotframework==6.1.1 || exit 1
+    pip install robotframework-seleniumlibrary==6.1.2 || exit 1
+  displayName: 'Install Robot Framework and dependencies with fail-fast'
+
+# 4. Debug: Confirm installations
 - script: |
     where python
     where pip
@@ -31,7 +49,7 @@ steps:
     pip list
   displayName: 'Debug: Confirm installations'
 
-# 4. Show directory contents (helps confirm repo structure)
+# 5. Debug: Show project structure
 - script: |
     echo "Current directory:"
     cd
@@ -41,31 +59,38 @@ steps:
     dir robot_test
   displayName: 'Debug: Show project structure'
 
-# 5. Run the test scripts
+# 6. Ensure report directory exists
+- script: |
+    if not exist "$(ROBOT_REPORTS_DIR)" mkdir "$(ROBOT_REPORTS_DIR)"
+  displayName: 'Ensure robot_results directory exists'
+
+# 7. Run Robot Framework Test
 - script: |
     robot --variable BROWSER:edge ^
-          --output $(ROBOT_REPORTS_DIR)/output.xml ^
-          --log $(ROBOT_REPORTS_DIR)/log.html ^
-          --report $(ROBOT_REPORTS_DIR)/report.html ^
+          --output "$(ROBOT_REPORTS_DIR)\output.xml" ^
+          --log "$(ROBOT_REPORTS_DIR)\log.html" ^
+          --report "$(ROBOT_REPORTS_DIR)\report.html" ^
           robot_test/
   displayName: 'Run Robot Framework Test'
-  continueOnError: true 
+  continueOnError: true  # Continue even if tests fail
 
-# 6. Convert to JUnit format for test publishing
+# 8. Convert Robot Output to JUnit
 - script: |
-    rebot --xunit $(ROBOT_REPORTS_DIR)/xunit.xml $(ROBOT_REPORTS_DIR)/output.xml
+    rebot --xunit "$(ROBOT_REPORTS_DIR)\xunit.xml" "$(ROBOT_REPORTS_DIR)\output.xml"
   displayName: 'Convert Robot Output to JUnit'
+  condition: always()
 
-# 7. Publish test results to Azure DevOps
+# 9. Publish test results
 - task: PublishTestResults@2
   inputs:
     testResultsFormat: 'JUnit'
-    testResultsFiles: '$(ROBOT_REPORTS_DIR)/xunit.xml'
+    testResultsFiles: '$(ROBOT_REPORTS_DIR)\xunit.xml'
     testRunTitle: 'Robot Framework Test Results'
-  condition: succeededOrFailed()
+  condition: always()
 
-# 8. Publish all Robot output files as an artifact
+# 10. Publish all Robot output files as artifacts
 - task: PublishBuildArtifacts@1
   inputs:
     pathToPublish: '$(ROBOT_REPORTS_DIR)'
     artifactName: 'RobotResults'
+  condition: always()
