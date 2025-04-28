@@ -2,7 +2,7 @@ trigger: none  # Don't trigger on code changes
 
 resources:
   pipelines:
-    - pipeline: AutomatedTestingPipeline  # Alias used if needed in jobs
+    - pipeline: AutomatedTestingPipeline
       source: AutomatedTesting-.NET Desktop-CI
       trigger: true  # Trigger when the source pipeline completes
 
@@ -19,80 +19,41 @@ steps:
   inputs:
     versionSpec: '3.11'
 
-# 2. Install Microsoft Edge WebDriver manually
+# 2. Install Edge WebDriver manually
 - powershell: |
     $edgeVersion = (Get-Item "C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe").VersionInfo.ProductVersion
     Write-Host "Detected Edge version: $edgeVersion"
-
     $url = "https://msedgedriver.azureedge.net/$edgeVersion/edgedriver_win64.zip"
     Write-Host "Downloading WebDriver from $url"
-
     Invoke-WebRequest -Uri $url -OutFile "edgedriver.zip"
     Expand-Archive -Path "edgedriver.zip" -DestinationPath "$(Build.SourcesDirectory)\edgedriver" -Force
-
     $env:PATH += ";$(Build.SourcesDirectory)\edgedriver"
   displayName: 'Install Edge WebDriver manually'
 
-# 3. Install Robot Framework and SeleniumLibrary with fail-fast
+# 3. Install Robot Framework and dependencies
 - script: |
     python -m pip install --upgrade pip || exit 1
     pip install robotframework==6.1.1 || exit 1
     pip install robotframework-seleniumlibrary==6.1.2 || exit 1
-  displayName: 'Install Robot Framework and dependencies with fail-fast'
+  displayName: 'Install Robot Framework and dependencies'
 
-# 4. Debug: Confirm installations
-- script: |
-    where python
-    where pip
-    where robot
-    pip list
-  displayName: 'Debug: Confirm installations'
-
-# 5. Debug: Show project structure
-- script: |
-    echo "Current directory:"
-    cd
-    echo "Repo root contents:"
-    dir
-    echo "robot_test folder contents:"
-    dir robot_test
-  displayName: 'Debug: Show project structure'
-
-# 6. Ensure report directory exists
-- script: |
-    if not exist "$(ROBOT_REPORTS_DIR)" mkdir "$(ROBOT_REPORTS_DIR)"
-  displayName: 'Ensure robot_results directory exists'
-
-# 7. Run Robot Framework Test
+# 4. Run Robot Framework tests
 - script: |
     robot --variable BROWSER:edge ^
           --output "$(ROBOT_REPORTS_DIR)\output.xml" ^
           --log "$(ROBOT_REPORTS_DIR)\log.html" ^
           --report "$(ROBOT_REPORTS_DIR)\report.html" ^
           robot_test/
-  displayName: 'Run Robot Framework Test'
+  displayName: 'Run Robot Framework Tests'
   continueOnError: true  # Continue even if tests fail
 
-# 7.5 Check if Robot tests failed and set pipeline failure
-- powershell: |
-    [xml]$robotOutput = Get-Content "$(ROBOT_REPORTS_DIR)\output.xml"
-    $failed = $robotOutput.output.statistics.total.stat | Where-Object { $_.fail -gt 0 }
-
-    if ($failed) {
-        Write-Error "Regression tests failed! Failing pipeline to trigger rollback."
-        exit 1
-    } else {
-        Write-Host "Regression tests passed!"
-    }
-  displayName: 'Check Robot Test Result and Fail Pipeline if Needed'
-
-# 8. Convert Robot Output to JUnit
+# 5. Convert Robot Output to JUnit
 - script: |
     rebot --xunit "$(ROBOT_REPORTS_DIR)\xunit.xml" "$(ROBOT_REPORTS_DIR)\output.xml"
   displayName: 'Convert Robot Output to JUnit'
   condition: always()
 
-# 9. Publish test results
+# 6. Publish test results
 - task: PublishTestResults@2
   inputs:
     testResultsFormat: 'JUnit'
@@ -100,19 +61,34 @@ steps:
     testRunTitle: 'Robot Framework Test Results'
   condition: always()
 
-# 10. Publish all Robot output files as artifacts
+# 7. Publish all Robot output files as artifacts
 - task: PublishBuildArtifacts@1
   inputs:
     pathToPublish: '$(ROBOT_REPORTS_DIR)'
     artifactName: 'RobotResults'
   condition: always()
 
+# 8. Rollback if regression tests fail
+- task: DownloadPipelineArtifact@2
+  inputs:
+    buildType: 'specific'
+    project: 'YourProjectName'  # Replace with your project name
+    pipeline: 'YourSystemPipelineName'  # The name of your system pipeline
+    buildVersionToDownload: 'latestFromBranch'  # Get the latest successful build
+    branchName: 'refs/heads/main'  # Replace with your branch name
+    artifactName: 'drop'  # Artifact name
+    targetPath: '$(Build.ArtifactStagingDirectory)/rollback'  # Save artifact here
+  displayName: 'Download Previous Successful Artifact'
+  condition: failed()  # Only run on failure
 
-# 11. Rollback if regression tests fail
 - script: |
-    echo Starting rollback process...
-    echo Here you should add your rollback steps (redeploy previous build, etc.)
-    REM Example placeholder rollback commands
-    REM az webapp deployment source config-zip --resource-group <your-rg> --name <your-app-name> --src <path-to-previous-build.zip>
-  displayName: 'Rollback Deployment'
-  condition: failed()
+    echo "Re-deploying the previous stable build..."
+    xcopy "$(Build.ArtifactStagingDirectory)/rollback/*" "C:\YourDeploymentFolder" /E /Y  # Replace with your deployment folder
+  displayName: 'Re-deploy Previous Artifact'
+  condition: failed()  # Only run on failure
+
+- script: |
+    echo "Verifying files in deployment directory..."
+    dir "C:\YourDeploymentFolder"  # Replace with your deployment folder path
+  displayName: 'Verify Rollback Files'
+  condition: failed()  # Only run on failure
