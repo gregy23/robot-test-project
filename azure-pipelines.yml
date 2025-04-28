@@ -107,11 +107,12 @@ steps:
     artifactName: 'RobotResults'
   condition: always()
 
+
 # 11. Rollback if regression tests fail
 - script: |
-    echo "Starting rollback process..."
-    echo "Here you should add your rollback steps (redeploy previous build, etc.)"
-    # Example placeholder rollback commands
-    # az webapp deployment source config-zip --resource-group <your-rg> --name <your-app-name> --src <path-to-previous-build.zip>
+    echo Starting rollback process...
+    echo Here you should add your rollback steps (redeploy previous build, etc.)
+    REM Example placeholder rollback commands
+    REM az webapp deployment source config-zip --resource-group <your-rg> --name <your-app-name> --src <path-to-previous-build.zip>
   displayName: 'Rollback Deployment'
   condition: failed()
