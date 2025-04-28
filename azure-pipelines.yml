@@ -72,8 +72,8 @@ steps:
 - task: DownloadPipelineArtifact@2
   inputs:
     buildType: 'specific'
-    project: 'YourProjectName'  # Replace with your project name
-    pipeline: 'YourSystemPipelineName'  # The name of your system pipeline
+    project: 'AutomatedTesting'  # Replace with your project name
+    pipeline: 'AutomatedTesting-.NET Desktop-CI'  # The name of your system pipeline
     buildVersionToDownload: 'latestFromBranch'  # Get the latest successful build
     branchName: 'refs/heads/main'  # Replace with your branch name
     artifactName: 'drop'  # Artifact name
