@@ -68,18 +68,18 @@ steps:
     artifactName: 'RobotResults'
   condition: always()
 
-# 8. Download previous artifact from system pipeline if this one fails
+# 8. Download last successful artifact from any branch
 - task: DownloadPipelineArtifact@2
   inputs:
     buildType: 'specific'
     project: 'AutomatedTesting'
     pipeline: 'AutomatedTesting-.NET Desktop-CI'
-    buildVersionToDownload: 'latestFromBranch'
-    branchName: 'refs/heads/main'
+    buildVersionToDownload: 'latest'
     artifactName: 'drop'
     targetPath: '$(Build.ArtifactStagingDirectory)/rollback'
   displayName: 'Download Previous Successful Artifact'
   condition: failed()
+  continueOnError: true
 
 # 9. Conditional redeploy using xcopy with /I to avoid prompt
 - powershell: |
