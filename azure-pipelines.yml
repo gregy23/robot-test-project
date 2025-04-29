@@ -68,27 +68,37 @@ steps:
     artifactName: 'RobotResults'
   condition: always()
 
-# 8. Rollback if regression tests fail
+# 8. Download last successful artifact from any branch
 - task: DownloadPipelineArtifact@2
   inputs:
     buildType: 'specific'
-    project: 'AutomatedTesting'  # Replace with your project name
-    pipeline: 'AutomatedTesting-.NET Desktop-CI'  # The name of your system pipeline
-    buildVersionToDownload: 'latestFromBranch'  # Get the latest successful build
-    branchName: 'refs/heads/main'  # Replace with your branch name
-    artifactName: 'drop'  # Artifact name
-    targetPath: '$(Build.ArtifactStagingDirectory)/rollback'  # Save artifact here
+    project: 'AutomatedTesting'
+    pipeline: 'AutomatedTesting-.NET Desktop-CI'
+    buildVersionToDownload: 'latest'
+    artifactName: 'drop'
+    targetPath: '$(Build.ArtifactStagingDirectory)/rollback'
   displayName: 'Download Previous Successful Artifact'
-  condition: failed()  # Only run on failure
+  condition: failed()
+  continueOnError: true
 
-- script: |
-    echo "Re-deploying the previous stable build..."
-    xcopy "$(Build.ArtifactStagingDirectory)/rollback/*" "C:\YourDeploymentFolder" /E /Y  # Replace with your deployment folder
-  displayName: 'Re-deploy Previous Artifact'
-  condition: failed()  # Only run on failure
+# 9. Check if artifact exists and redeploy if it does
+- powershell: |
+    if (Test-Path "$(Build.ArtifactStagingDirectory)\rollback") {
+      Write-Host "Rollback artifact found. Re-deploying the previous stable build..."
+      xcopy "$(Build.ArtifactStagingDirectory)\rollback\*" "C:\YourDeploymentFolder" /E /Y
+    } else {
+      Write-Warning "No rollback artifact found. Skipping deployment."
+    }
+  displayName: 'Conditional Redeploy of Previous Artifact'
+  condition: failed()
 
-- script: |
-    echo "Verifying files in deployment directory..."
-    dir "C:\YourDeploymentFolder"  # Replace with your deployment folder path
+# 10. Verify rollback content (optional)
+- powershell: |
+    if (Test-Path "C:\YourDeploymentFolder") {
+      Write-Host "Contents of deployment folder:"
+      Get-ChildItem "C:\YourDeploymentFolder" -Recurse
+    } else {
+      Write-Warning "Deployment folder does not exist."
+    }
   displayName: 'Verify Rollback Files'
-  condition: failed()  # Only run on failure
+  condition: failed()
