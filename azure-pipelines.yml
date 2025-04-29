@@ -68,37 +68,33 @@ steps:
     artifactName: 'RobotResults'
   condition: always()
 
-# 8. Download last successful artifact from any branch
+# 8. Download previous artifact from system pipeline if this one fails
 - task: DownloadPipelineArtifact@2
   inputs:
     buildType: 'specific'
     project: 'AutomatedTesting'
     pipeline: 'AutomatedTesting-.NET Desktop-CI'
-    buildVersionToDownload: 'latest'
+    buildVersionToDownload: 'latestFromBranch'
+    branchName: 'refs/heads/main'
     artifactName: 'drop'
     targetPath: '$(Build.ArtifactStagingDirectory)/rollback'
   displayName: 'Download Previous Successful Artifact'
   condition: failed()
-  continueOnError: true
 
-# 9. Check if artifact exists and redeploy if it does
+# 9. Conditional redeploy using xcopy with /I to avoid prompt
 - powershell: |
     if (Test-Path "$(Build.ArtifactStagingDirectory)\rollback") {
       Write-Host "Rollback artifact found. Re-deploying the previous stable build..."
-      xcopy "$(Build.ArtifactStagingDirectory)\rollback\*" "C:\YourDeploymentFolder" /E /Y
+      xcopy "$(Build.ArtifactStagingDirectory)\rollback\*" "C:\YourDeploymentFolder" /E /Y /I
     } else {
       Write-Warning "No rollback artifact found. Skipping deployment."
     }
   displayName: 'Conditional Redeploy of Previous Artifact'
   condition: failed()
 
-# 10. Verify rollback content (optional)
-- powershell: |
-    if (Test-Path "C:\YourDeploymentFolder") {
-      Write-Host "Contents of deployment folder:"
-      Get-ChildItem "C:\YourDeploymentFolder" -Recurse
-    } else {
-      Write-Warning "Deployment folder does not exist."
-    }
+# 10. Optional: Verify rollback folder contents
+- script: |
+    echo "Verifying files in deployment directory..."
+    dir "C:\YourDeploymentFolder"
   displayName: 'Verify Rollback Files'
   condition: failed()
