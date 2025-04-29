@@ -45,7 +45,7 @@ steps:
           --report "$(ROBOT_REPORTS_DIR)\report.html" ^
           robot_test/
   displayName: 'Run Robot Framework Tests'
-  continueOnError: true  # Continue even if tests fail
+  continueOnError: true
 
 # 5. Convert Robot Output to JUnit
 - script: |
@@ -68,35 +68,51 @@ steps:
     artifactName: 'RobotResults'
   condition: always()
 
-
-# 8. Download last successful artifact from main branch
+# 8. Download last successful artifact from any branch
 - task: DownloadPipelineArtifact@2
   inputs:
     buildType: 'specific'
     project: 'AutomatedTesting'
     pipeline: 'AutomatedTesting-.NET Desktop-CI'
-    buildVersionToDownload: 'latestFromBranch'
-    branchName: 'refs/heads/main'
+    buildVersionToDownload: 'latest'
     artifactName: 'drop'
-    targetPath: '$(Build.ArtifactStagingDirectory)\rollback'
+    targetPath: '$(Build.ArtifactStagingDirectory)/rollback'
   displayName: 'Download Previous Successful Artifact'
   condition: failed()
   continueOnError: true
 
-# 9. Conditional redeploy using xcopy with /I
+# 9. Inspect rollback artifact contents
 - powershell: |
+    Write-Host "Checking contents of rollback folder:"
+    Get-ChildItem -Recurse "$(Build.ArtifactStagingDirectory)\rollback"
+  displayName: 'Inspect Rollback Artifact'
+  condition: failed()
+
+# 10. Conditional redeploy with safe folder creation
+- powershell: |
+    $deployPath = "C:\YourDeploymentFolder"
+    if (!(Test-Path $deployPath)) {
+      New-Item -ItemType Directory -Force -Path $deployPath
+    }
+
     if (Test-Path "$(Build.ArtifactStagingDirectory)\rollback") {
       Write-Host "Rollback artifact found. Re-deploying the previous stable build..."
-      xcopy "$(Build.ArtifactStagingDirectory)\rollback\*" "C:\YourDeploymentFolder" /E /Y /I
+      xcopy "$(Build.ArtifactStagingDirectory)\rollback\*" "$deployPath" /E /Y /I
     } else {
       Write-Warning "No rollback artifact found. Skipping deployment."
     }
   displayName: 'Conditional Redeploy of Previous Artifact'
   condition: failed()
 
-# 10. Verify rollback folder contents
-- script: |
-    echo "Verifying files in deployment directory..."
-    dir "C:\YourDeploymentFolder"
+# 11. Verify rollback folder contents
+- powershell: |
+    $path = "C:\YourDeploymentFolder"
+    if (Test-Path $path) {
+      Write-Host "Verifying files in deployment directory..."
+      Get-ChildItem -Recurse $path
+    } else {
+      Write-Warning "Deployment folder does not exist."
+      exit 1
+    }
   displayName: 'Verify Rollback Files'
   condition: failed()
