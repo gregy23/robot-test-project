@@ -65,11 +65,6 @@ Navigate To Employee Management
     Click Element                    id=ok
 
 
-
-
-    Sleep    1000s
-
-
 *** Test Cases ***
 Create Employee End-to-End Test
     [Documentation]    Full workflow to edit an employee in the system.

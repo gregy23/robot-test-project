@@ -43,6 +43,6 @@ i360 End-to-End Test
     Click Button    //*[@id="btnGenerateReport"]
 
     # Add more steps here as needed, instead of sleep
-    Sleep    10s
+  
 
     Close Browser
