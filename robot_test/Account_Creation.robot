@@ -60,7 +60,7 @@ Create_employee End-to-End Test
     #selecting employees designation fields
    Wait Until Element Is Visible    //*[@id="createForm"]/div[4]/div[1]/table/tbody/tr[2]/td[2]/span/button
    Click Element    //*[@id="createForm"]/div[4]/div[1]/table/tbody/tr[2]/td[2]/span/button
-   Wait Until Element Is Visible     xpath=//span[@class='k-list-item-text' and text()='AML201 - AML Designation']
+   Wait Until Element Is Visible     xpath=//span[@class='k-list-item-text' and text()='AML201 - AML Designation'] 
    Click Element     xpath=//span[@class='k-list-item-text' and text()='AML201 - AML Designation']
 
    #selecting employee status drop box
@@ -91,7 +91,7 @@ Create_employee End-to-End Test
     Execute JavaScript    window.scrollBy(0, 1000)
     Click Element    //*[@id="btnPostNew"]
 
-
+    Sleep    100s
 
    
     Close All Browsers
