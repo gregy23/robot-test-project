@@ -68,11 +68,32 @@ steps:
     artifactName: 'RobotResults'
   condition: always()
 
-# 8. Get second latest successful build ID using REST API
+# 8. Get pipeline definition ID for build 571
 - powershell: |
     $organization = "AutomatedTestingSSCGI"
     $project = "AutomatedTesting"
-    $pipelineId = 1234  # <-- Replace with actual definition ID
+    $buildId = 571
+    $pat = "$(System.AccessToken)"
+
+    $uri = "https://dev.azure.com/$organization/$project/_apis/build/builds/$buildId?api-version=7.0"
+
+    $response = Invoke-RestMethod -Uri $uri -Headers @{
+      Authorization = "Bearer $pat"
+    } -Method Get
+
+    $definitionId = $response.definition.id
+    Write-Host "Pipeline definition ID: $definitionId"
+    Write-Host "##vso[task.setvariable variable=PIPELINE_DEFINITION_ID]$definitionId"
+  env:
+    System.AccessToken: $(System.AccessToken)
+  displayName: 'Get Pipeline Definition ID from Build 571'
+  condition: failed()
+
+# 9. Get second latest successful build ID from that pipeline
+- powershell: |
+    $organization = "AutomatedTestingSSCGI"
+    $project = "AutomatedTesting"
+    $pipelineId = "$(PIPELINE_DEFINITION_ID)"
     $pat = "$(System.AccessToken)"
 
     $uri = "https://dev.azure.com/$organization/$project/_apis/build/builds?definitions=$pipelineId&resultFilter=succeeded&queryOrder=finishTimeDescending&`$top=2&api-version=7.0"
@@ -91,10 +112,10 @@ steps:
     }
   env:
     System.AccessToken: $(System.AccessToken)
-  displayName: 'Get Previous Successful Build ID'
+  displayName: 'Get Second Previous Successful Build ID'
   condition: failed()
 
-# 9. Download the previous successful artifact
+# 10. Download the previous successful artifact
 - task: DownloadPipelineArtifact@2
   inputs:
     buildType: 'specific'
@@ -109,14 +130,14 @@ steps:
   condition: failed()
   continueOnError: true
 
-# 10. Inspect rollback artifact contents
+# 11. Inspect rollback artifact contents
 - powershell: |
     Write-Host "Checking contents of rollback folder:"
     Get-ChildItem -Recurse "$(Build.ArtifactStagingDirectory)\rollback"
   displayName: 'Inspect Rollback Artifact'
   condition: failed()
 
-# 11. Conditional redeploy with safe folder creation
+# 12. Conditional redeploy with safe folder creation
 - powershell: |
     $deployPath = "C:\YourDeploymentFolder"
     if (!(Test-Path $deployPath)) {
@@ -132,7 +153,7 @@ steps:
   displayName: 'Conditional Redeploy of Previous Artifact'
   condition: failed()
 
-# 12. Verify rollback folder contents
+# 13. Verify rollback folder contents
 - powershell: |
     $path = "C:\YourDeploymentFolder"
     if (Test-Path $path) {
