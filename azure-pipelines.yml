@@ -79,7 +79,7 @@ steps:
     $definitionIdResponse = Invoke-RestMethod -Uri $definitionIdUrl -Headers @{Authorization = "Bearer $personalAccessToken"} -Method Get
     $definitionId = $definitionIdResponse.value[0].id
 
-    # Adjusted API call to retrieve the latest successful builds
+    # Correcting the API query to not conflict filters
     $buildsUrl = "$($organization)$project/_apis/build/builds?definitions=$definitionId&resultFilter=succeeded&statusFilter=completed&$top=2&queryOrder=finishTimeDescending&api-version=7.0"
     $buildsResponse = Invoke-RestMethod -Uri $buildsUrl -Headers @{Authorization = "Bearer $personalAccessToken"} -Method Get
 
@@ -88,7 +88,6 @@ steps:
       exit 1
     }
 
-    # Get the second most recent successful build
     $secondBuildId = $buildsResponse.value[1].id
     Write-Host "##vso[task.setvariable variable=PreviousBuildId]$secondBuildId"
   displayName: 'Get Previous Successful Build ID'
