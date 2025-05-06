@@ -70,7 +70,7 @@ steps:
 
 # 8. Get Previous Successful Build ID (2nd latest)
 - powershell: |
-    $personalAccessToken = "$(System.AccessToken)"  # **Added OAuth token access**
+    $personalAccessToken = "$(System.AccessToken)"
     $project = "AutomatedTesting"
     $pipelineName = "AutomatedTesting-.NET Desktop-CI"
     $organization = "$(System.CollectionUri)"
@@ -79,6 +79,7 @@ steps:
     $definitionIdResponse = Invoke-RestMethod -Uri $definitionIdUrl -Headers @{Authorization = "Bearer $personalAccessToken"} -Method Get
     $definitionId = $definitionIdResponse.value[0].id
 
+    # Update query to avoid conflict between filters
     $buildsUrl = "$($organization)$project/_apis/build/builds?definitions=$definitionId&resultFilter=succeeded&statusFilter=completed&$top=2&queryOrder=finishTimeDescending&api-version=7.0"
     $buildsResponse = Invoke-RestMethod -Uri $buildsUrl -Headers @{Authorization = "Bearer $personalAccessToken"} -Method Get
 
@@ -91,7 +92,7 @@ steps:
     Write-Host "##vso[task.setvariable variable=PreviousBuildId]$secondBuildId"
   displayName: 'Get Previous Successful Build ID'
   env:
-    System.AccessToken: $(System.AccessToken)  # **Added OAuth token access in env**
+    System.AccessToken: $(System.AccessToken)
   condition: failed()
 
 # 9. Download Previous Successful Artifact (2nd latest)
