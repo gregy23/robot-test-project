@@ -40,9 +40,9 @@ steps:
 # 4. Run Robot Framework tests
 - script: |
     robot --variable BROWSER:edge ^
-          --output "$(ROBOT_REPORTS_DIR)\output.xml" ^
-          --log "$(ROBOT_REPORTS_DIR)\log.html" ^
-          --report "$(ROBOT_REPORTS_DIR)\report.html" ^
+          --output "$(ROBOT_REPORTS_DIR)\output.xml" ^ 
+          --log "$(ROBOT_REPORTS_DIR)\log.html" ^ 
+          --report "$(ROBOT_REPORTS_DIR)\report.html" ^ 
           robot_test/
   displayName: 'Run Robot Framework Tests'
   continueOnError: true
@@ -70,7 +70,7 @@ steps:
 
 # 8. Get Previous Successful Build ID (2nd latest)
 - powershell: |
-    $personalAccessToken = "$(System.AccessToken)"
+    $personalAccessToken = "$(System.AccessToken)"  # **Added OAuth token access**
     $project = "AutomatedTesting"
     $pipelineName = "AutomatedTesting-.NET Desktop-CI"
     $organization = "$(System.CollectionUri)"
@@ -91,7 +91,7 @@ steps:
     Write-Host "##vso[task.setvariable variable=PreviousBuildId]$secondBuildId"
   displayName: 'Get Previous Successful Build ID'
   env:
-    System.AccessToken: $(System.AccessToken)
+    System.AccessToken: $(System.AccessToken)  # **Added OAuth token access in env**
   condition: failed()
 
 # 9. Download Previous Successful Artifact (2nd latest)
