@@ -68,27 +68,55 @@ steps:
     artifactName: 'RobotResults'
   condition: always()
 
-# 8. Download last successful artifact from any branch
+# 8. Get Previous Successful Build ID (2nd latest)
+- powershell: |
+    $personalAccessToken = "$(System.AccessToken)"
+    $project = "AutomatedTesting"
+    $pipelineName = "AutomatedTesting-.NET Desktop-CI"
+    $organization = "$(System.CollectionUri)"
+    $definitionIdUrl = "$($organization)$project/_apis/build/definitions?name=$pipelineName&api-version=7.0"
+
+    $definitionIdResponse = Invoke-RestMethod -Uri $definitionIdUrl -Headers @{Authorization = "Bearer $personalAccessToken"} -Method Get
+    $definitionId = $definitionIdResponse.value[0].id
+
+    $buildsUrl = "$($organization)$project/_apis/build/builds?definitions=$definitionId&resultFilter=succeeded&statusFilter=completed&$top=2&queryOrder=finishTimeDescending&api-version=7.0"
+    $buildsResponse = Invoke-RestMethod -Uri $buildsUrl -Headers @{Authorization = "Bearer $personalAccessToken"} -Method Get
+
+    if ($buildsResponse.count -lt 2) {
+      Write-Error "Not enough builds to perform rollback."
+      exit 1
+    }
+
+    $secondBuildId = $buildsResponse.value[1].id
+    Write-Host "##vso[task.setvariable variable=PreviousBuildId]$secondBuildId"
+  displayName: 'Get Previous Successful Build ID'
+  env:
+    System.AccessToken: $(System.AccessToken)
+  condition: failed()
+
+# 9. Download Previous Successful Artifact (2nd latest)
 - task: DownloadPipelineArtifact@2
   inputs:
-    buildType: 'specific'
     project: 'AutomatedTesting'
     pipeline: 'AutomatedTesting-.NET Desktop-CI'
-    buildVersionToDownload: 'latest'
+    buildType: 'specific'
+    buildVersionToDownload: 'specific'
+    specificBuildWithTriggering: false
+    runId: '$(PreviousBuildId)'
     artifactName: 'drop'
     targetPath: '$(Build.ArtifactStagingDirectory)/rollback'
-  displayName: 'Download Previous Successful Artifact'
-  condition: failed()
+  displayName: 'Download Previous Successful Artifact (2nd Latest)'
+  condition: and(failed(), ne(variables['PreviousBuildId'], ''))
   continueOnError: true
 
-# 9. Inspect rollback artifact contents
+# 10. Inspect rollback artifact contents
 - powershell: |
     Write-Host "Checking contents of rollback folder:"
     Get-ChildItem -Recurse "$(Build.ArtifactStagingDirectory)\rollback"
   displayName: 'Inspect Rollback Artifact'
   condition: failed()
 
-# 10. Conditional redeploy with safe folder creation
+# 11. Conditional redeploy with safe folder creation
 - powershell: |
     $deployPath = "C:\YourDeploymentFolder"
     if (!(Test-Path $deployPath)) {
@@ -104,7 +132,7 @@ steps:
   displayName: 'Conditional Redeploy of Previous Artifact'
   condition: failed()
 
-# 11. Verify rollback folder contents
+# 12. Verify rollback folder contents
 - powershell: |
     $path = "C:\YourDeploymentFolder"
     if (Test-Path $path) {
