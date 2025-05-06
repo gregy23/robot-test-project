@@ -39,10 +39,10 @@ steps:
 
 # 4. Run Robot Framework tests
 - script: |
-    robot --variable BROWSER:edge ^ 
-          --output "$(ROBOT_REPORTS_DIR)\output.xml" ^ 
-          --log "$(ROBOT_REPORTS_DIR)\log.html" ^ 
-          --report "$(ROBOT_REPORTS_DIR)\report.html" ^ 
+    robot --variable BROWSER:edge ^
+          --output "$(ROBOT_REPORTS_DIR)\output.xml" ^
+          --log "$(ROBOT_REPORTS_DIR)\log.html" ^
+          --report "$(ROBOT_REPORTS_DIR)\report.html" ^
           robot_test/
   displayName: 'Run Robot Framework Tests'
   continueOnError: true
@@ -68,46 +68,45 @@ steps:
     artifactName: 'RobotResults'
   condition: always()
 
-# 8. Get Previous Successful Build ID (2nd latest)
+# 8. Get second latest successful build ID using REST API
 - powershell: |
-    $personalAccessToken = "$(System.AccessToken)"
+    $organization = "AutomatedTestingSSCGI"
     $project = "AutomatedTesting"
-    $pipelineName = "AutomatedTesting-.NET Desktop-CI"
-    $organization = "$(System.CollectionUri)"
-    $definitionIdUrl = "$($organization)$project/_apis/build/definitions?name=$pipelineName&api-version=7.0"
+    $pipelineId = 1234  # <-- Replace with actual definition ID
+    $pat = "$(System.AccessToken)"
 
-    $definitionIdResponse = Invoke-RestMethod -Uri $definitionIdUrl -Headers @{Authorization = "Bearer $personalAccessToken"} -Method Get
-    $definitionId = $definitionIdResponse.value[0].id
+    $uri = "https://dev.azure.com/$organization/$project/_apis/build/builds?definitions=$pipelineId&resultFilter=succeeded&queryOrder=finishTimeDescending&`$top=2&api-version=7.0"
 
-    # Correcting the API query to not conflict filters
-    $buildsUrl = "$($organization)$project/_apis/build/builds?definitions=$definitionId&resultFilter=succeeded&statusFilter=completed&$top=2&queryOrder=finishTimeDescending&api-version=7.0"
-    $buildsResponse = Invoke-RestMethod -Uri $buildsUrl -Headers @{Authorization = "Bearer $personalAccessToken"} -Method Get
+    $response = Invoke-RestMethod -Uri $uri -Headers @{
+      Authorization = "Bearer $pat"
+    } -Method Get
 
-    if ($buildsResponse.count -lt 2) {
-      Write-Error "Not enough builds to perform rollback."
+    if ($response.count -ge 2) {
+      $buildId = $response.value[1].id
+      Write-Host "Found second latest successful build ID: $buildId"
+      Write-Host "##vso[task.setvariable variable=PREVIOUS_SUCCESS_BUILD_ID]$buildId"
+    } else {
+      Write-Error "Not enough successful builds found."
       exit 1
     }
-
-    $secondBuildId = $buildsResponse.value[1].id
-    Write-Host "##vso[task.setvariable variable=PreviousBuildId]$secondBuildId"
-  displayName: 'Get Previous Successful Build ID'
   env:
     System.AccessToken: $(System.AccessToken)
+  displayName: 'Get Previous Successful Build ID'
   condition: failed()
 
-# 9. Download Previous Successful Artifact (2nd Latest)
+# 9. Download the previous successful artifact
 - task: DownloadPipelineArtifact@2
   inputs:
+    buildType: 'specific'
     project: 'AutomatedTesting'
     pipeline: 'AutomatedTesting-.NET Desktop-CI'
-    buildType: 'specific'
     buildVersionToDownload: 'specific'
     specificBuildWithTriggering: false
-    runId: '$(PreviousBuildId)'
+    buildId: '$(PREVIOUS_SUCCESS_BUILD_ID)'
     artifactName: 'drop'
     targetPath: '$(Build.ArtifactStagingDirectory)/rollback'
-  displayName: 'Download Previous Successful Artifact (2nd Latest)'
-  condition: and(failed(), ne(variables['PreviousBuildId'], ''))
+  displayName: 'Download Previous Successful Artifact'
+  condition: failed()
   continueOnError: true
 
 # 10. Inspect rollback artifact contents
